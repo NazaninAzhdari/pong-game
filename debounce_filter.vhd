@@ -18,7 +18,7 @@ architecture RTL of debounce_filter is
     signal  r_debounced :   STD_LOGIC                           :='0';
 
     begin
-        process(i_clk) then
+        process(i_clk) is
             begin
                 if rising_edge(i_clk) then
                     if i_bouncy/= r_debounced and r_counter < g_CLK_CYCLES -1 then
