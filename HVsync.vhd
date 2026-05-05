@@ -22,7 +22,7 @@ architecture RTL of HVsync is
     signal  r_y     :   integer range 0 to pc_V_ACTIVE-1   :=0;
 
     begin
-        process(i_clk) is
+        process(i_clk, i_reset) is
             begin
                 if i_reset = '1' then
                     r_x <= 0;

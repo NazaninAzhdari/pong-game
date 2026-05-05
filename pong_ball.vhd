@@ -8,7 +8,6 @@ use work.pongPack.ALL;
 entity pong_ball is
     port (
         i_clk       :       in      STD_LOGIC; --25
-        i_reset     :       in      STD_LOGIC;
         i_start     :       in      STD_LOGIC;
         i_x         :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_y         :       in      unsigned(pc_GAME_BITS-1 downto 0);
@@ -37,60 +36,54 @@ architecture RTL of pong_ball is
         process(i_clk) is
             begin
                 if rising_edge(i_clk) then
-                    if i_reset = '1' then
+                    if i_start = '0' then
                         r_x_ball <= pc_X_BALL_START;
                         r_y_ball <= pc_Y_BALL_START;
                         r_x_ball_nxt <= r_x_ball + 1;
                         r_y_ball_nxt <= r_y_ball + 1;
                         r_move_count <= 0;
                     else
-                        if i_start = '1' then
-                            if r_move_count < pc_BALL_SPEED then
-                                r_move_count <= r_move_count + 1;
-                            else
-                                r_move_count <= 0;
-
-                                if r_x_ball < r_x_ball_nxt then
-                                    if r_x_ball /= pc_GAME_WIDTH-2 then
-                                        r_x_ball <= r_x_ball_nxt;
-                                        r_x_ball_nxt <= r_x_ball_nxt +1;
-                                    elsif r_x_ball = pc_GAME_WIDTH -2 then
-                                        r_x_ball <= r_x_ball_nxt;
-                                        r_x_ball_nxt <= r_x_ball_nxt -1;
-                                    end if;
-                                elsif r_x_ball > r_x_ball_nxt then
-                                    if r_x_ball /=1 then
-                                        r_x_ball <= r_x_ball_nxt;
-                                        r_x_ball_nxt <= r_x_ball_nxt -1;
-                                    elsif r_x_ball = 1 then
-                                        r_x_ball <= r_x_ball_nxt;
-                                        r_x_ball_nxt <= r_x_ball_nxt +1;
-                                    end if;
-                                end if;
-
-                                if r_y_ball < r_y_ball_nxt then
-                                    if r_y_ball /= pc_GAME_HEIGHT-2 then
-                                        r_y_ball <= r_y_ball_nxt;
-                                        r_y_ball_nxt <= r_y_ball_nxt +1;
-                                    elsif r_y_ball = pc_GAME_HEIGHT-2 then
-                                        r_y_ball <= r_y_ball_nxt;
-                                        r_y_ball_nxt <= r_y_ball_nxt -1;
-                                    end if;
-                                elsif r_y_ball > r_y_ball_nxt then
-                                    if r_y_ball /= 1 then
-                                        r_y_ball <= r_y_ball_nxt;
-                                        r_y_ball_nxt <= r_y_ball_nxt -1;
-                                    elsif r_y_ball = 1 then
-                                        r_y_ball <= r_y_ball_nxt;
-                                        r_y_ball_nxt <= r_y_ball_nxt +1;
-                                    end if;
-                                end if;
-
-                            end if;
+                        if r_move_count < pc_BALL_SPEED then
+                            r_move_count <= r_move_count + 1;
                         else
                             r_move_count <= 0;
+
+                            if r_x_ball < r_x_ball_nxt then
+                                if r_x_ball_nxt /= pc_X_RIGHT_BORDER-1 then
+                                    r_x_ball <= r_x_ball_nxt;
+                                    r_x_ball_nxt <= r_x_ball_nxt +1;
+                                elsif r_x_ball_nxt = pc_X_RIGHT_BORDER-1 then
+                                    r_x_ball <= r_x_ball_nxt;
+                                    r_x_ball_nxt <= r_x_ball_nxt -1;
+                                end if;
+                            elsif r_x_ball > r_x_ball_nxt then
+                                if r_x_ball_nxt /= pc_X_LEFT_BORDER+1 then
+                                    r_x_ball <= r_x_ball_nxt;
+                                    r_x_ball_nxt <= r_x_ball_nxt -1;
+                                elsif r_x_ball_nxt = pc_X_LEFT_BORDER+1 then
+                                    r_x_ball <= r_x_ball_nxt;
+                                    r_x_ball_nxt <= r_x_ball_nxt +1;
+                                end if;
+                            end if;
+
+                            if r_y_ball < r_y_ball_nxt then
+                                if r_y_ball_nxt /= pc_Y_BUTTOM_BORDER-1 then
+                                    r_y_ball <= r_y_ball_nxt;
+                                    r_y_ball_nxt <= r_y_ball_nxt +1;
+                                elsif r_y_ball_nxt = pc_Y_BUTTOM_BORDER-1 then
+                                    r_y_ball <= r_y_ball_nxt;
+                                    r_y_ball_nxt <= r_y_ball_nxt -1;
+                                end if;
+                            elsif r_y_ball > r_y_ball_nxt then
+                                if r_y_ball_nxt /= pc_Y_TOP_BORDER+1 then
+                                    r_y_ball <= r_y_ball_nxt;
+                                    r_y_ball_nxt <= r_y_ball_nxt -1;
+                                elsif r_y_ball_nxt = pc_Y_TOP_BORDER+1 then
+                                    r_y_ball <= r_y_ball_nxt;
+                                    r_y_ball_nxt <= r_y_ball_nxt +1;
+                                end if;
+                            end if;
                         end if;
-                        
                     end if;
                 end if;
             end process;
@@ -101,9 +94,7 @@ architecture RTL of pong_ball is
             process(i_clk) is
                 begin
                     if rising_edge(i_clk) then
-                        if (r_x = r_x_ball ) 
-								and (r_y = r_y_ball )
-                        then
+                        if (r_x = r_x_ball ) and (r_y = r_y_ball ) then
                             o_draw_ball <= '1';
                         else
                             o_draw_ball <= '0';

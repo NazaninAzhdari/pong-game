@@ -12,7 +12,7 @@ entity pong_paddle is
     );
     port (
         i_clk           :       in      STD_LOGIC; --25MHz clock
-		  i_reset			:		  in 		 STD_LOGIC;
+		i_start			:		in 		STD_LOGIC;
         i_x             :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_y             :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_btn_up        :       in      STD_LOGIC;
@@ -40,41 +40,41 @@ architecture RTL of pong_paddle is
         process(i_clk) is
             begin
                 if rising_edge(i_clk) then
-					 if i_reset = '1' then
+					 if i_start = '0' then
 							r_y_paddle_top <= 11;
 							r_y_paddle_dwn <= 17;
 							r_paddle_move_count <= 0;
 					else
 						if r_btn_DV = '1' then
-                        if r_paddle_move_count < pc_PADDLE_SPEED-1 then
-                            r_paddle_move_count <= r_paddle_move_count + 1;
+                            if r_paddle_move_count < pc_PADDLE_SPEED-1 then
+                                r_paddle_move_count <= r_paddle_move_count + 1;
+                            else
+                                r_paddle_move_count <= 0;
+
+                                if i_btn_up = '1' then 
+                                    if r_y_paddle_top /= pc_Y_TOP_BORDER+1 then
+                                        r_y_paddle_top <= r_y_paddle_top - 1;
+                                        r_y_paddle_dwn <= r_y_paddle_dwn - 1;
+                                    elsif r_y_paddle_top = pc_Y_TOP_BORDER+1 then
+                                        r_y_paddle_top <= r_y_paddle_top;
+                                        r_y_paddle_dwn <= r_y_paddle_dwn;
+                                    end if;
+                                
+                                elsif i_btn_dwn = '1' then 
+                                    if r_y_paddle_dwn /= pc_Y_BUTTOM_BORDER-1 then
+                                        r_y_paddle_top <= r_y_paddle_top + 1;
+                                        r_y_paddle_dwn <= r_y_paddle_dwn + 1;
+                                    elsif r_y_paddle_dwn = pc_Y_BUTTOM_BORDER-1 then
+                                        r_y_paddle_top <= r_y_paddle_top;
+                                        r_y_paddle_dwn <= r_y_paddle_dwn;
+                                    end if;
+                                end if;
+
+                            end if; 
                         else
                             r_paddle_move_count <= 0;
-
-                            if i_btn_up = '1' then 
-                                if r_y_paddle_top /=0 then
-                                    r_y_paddle_top <= r_y_paddle_top - 1;
-                                    r_y_paddle_dwn <= r_y_paddle_dwn - 1;
-                                elsif r_y_paddle_top = 0 then
-                                    r_y_paddle_top <= r_y_paddle_top;
-                                    r_y_paddle_dwn <= r_y_paddle_dwn;
-                                end if;
-                            
-                            elsif i_btn_dwn = '1' then 
-                                if r_y_paddle_dwn /= pc_GAME_HEIGHT-1 then
-                                    r_y_paddle_top <= r_y_paddle_top + 1;
-                                    r_y_paddle_dwn <= r_y_paddle_dwn + 1;
-                                elsif r_y_paddle_dwn = pc_GAME_HEIGHT-1 then
-                                    r_y_paddle_top <= r_y_paddle_top;
-                                    r_y_paddle_dwn <= r_y_paddle_dwn;
-                                end if;
-                            end if;
-
-                        end if; 
-                    else
-                        r_paddle_move_count <= 0;
-                    end if;
-						 end if;
+                        end if;
+					end if;
                 end if;
 			end process;
             
@@ -82,15 +82,20 @@ architecture RTL of pong_paddle is
 				process(i_clk) is
 					begin
 						if rising_edge(i_clk) then
-							if (r_x < g_X_LOCATION_PADDLE + pc_PADDLE_WIDTH) 
-                                        and (r_x >= g_X_LOCATION_PADDLE )
-                                        and (r_y < r_y_paddle_dwn )
-                                        and (r_y > r_y_paddle_top) then
-													 
-								o_draw_paddle <= '1';
+							if r_x < pc_X_MIDDLE_BORDER then
+								if r_x = g_X_LOCATION_PADDLE + 1	and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
+									o_draw_paddle <= '1';
+								else
+									o_draw_paddle <= '0';
+								end if;
 							else
-								o_draw_paddle <= '0';
+								if r_x = g_X_LOCATION_PADDLE + 1 and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
+									o_draw_paddle <= '1';
+								else
+									o_draw_paddle <= '0';
+								end if;
 							end if;
+							
 						end if;
 					end process;
 					

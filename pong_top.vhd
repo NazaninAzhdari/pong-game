@@ -12,7 +12,7 @@ entity pong_top is
     port (
         i_clk       :   in      STD_LOGIC;  --50
         i_reset     :   in      STD_LOGIC;
-		  i_start	  :	in		  STD_LOGIC;
+		i_start	    :	in		STD_LOGIC;
         i_switch    :   in      unsigned(3 downto 0);
 
         --output to hdmi
@@ -28,27 +28,16 @@ architecture RTL of pong_top is
     signal r_clk25    :    STD_LOGIC                :='0';
     signal r_switch   :    unsigned(3 downto 0)     :=(others=>'0');
     signal r_reset    :    STD_LOGIC                :='0';
-	 signal r_start    :    STD_LOGIC                :='0';
+	signal r_start    :    STD_LOGIC                :='0';
+
+    signal w_hs       :    STD_LOGIC                 :='0';
+    signal w_vs       :    STD_LOGIC                 :='0'; 
+    signal w_de       :    STD_LOGIC                 :='0';
+
+    signal w_blue         :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
+    signal w_green        :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
+    signal w_red          :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
 	 
-    signal w_x        :    unsigned(pc_VGA_BITS-1 downto 0) :=(others=>'0');
-    signal w_y        :    unsigned(pc_VGA_BITS-1 downto 0) :=(others=>'0');
-    signal r_hs       :    STD_LOGIC                 :='0';
-    signal r_vs       :    STD_LOGIC                 :='0'; 
-    signal r_de       :    STD_LOGIC                 :='0';
-    
-    signal r_x        :    unsigned(pc_GAME_BITS-1 downto 0) :=(others=>'0');
-    signal r_y        :    unsigned(pc_GAME_BITS-1 downto 0) :=(others=>'0');
-
-    signal r_draw_paddle1 :  STD_LOGIC    :='0';
-    signal r_draw_paddle2 :  STD_LOGIC    :='0';
-    signal r_draw_border  :  STD_LOGIC    :='0';
-    signal r_draw_ball    :  STD_LOGIC    :='0';
-    signal r_draw         :  STD_LOGIC    :='0';
-
-    signal r_blue         :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
-    signal r_green        :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
-    signal r_red          :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
-
     begin
         --dividing clock frequency
         clk25: entity work.freq_divider
@@ -59,7 +48,6 @@ architecture RTL of pong_top is
             i_clk => i_clk,  --50
             o_clk => r_clk25 --25
         );
-
 
 
         --debouncing switches
@@ -127,104 +115,32 @@ architecture RTL of pong_top is
             o_debounced => r_start
         );
 
-        --synchronizing
-        sync : entity work.HVsync
-        port map (
-            i_clk=> r_clk25,  --25MHz
-            i_reset=> r_reset,
-            o_x=>w_x,
-            o_y=>w_y,
-            o_HS=>r_hs,
-            o_VS=>r_vs,
-            o_DE=>r_de
-        );
-
-        r_x <= w_x(pc_VGA_BITS-1 downto 4);
-        r_y <= w_y(pc_VGA_BITS-1 downto 4);
-
-
-        --paddle 1
-        paddle1: entity work.pong_paddle
-        generic map (
-        g_X_LOCATION_PADDLE=> pc_X_PADDLE_PLAYER1
+        --pong game
+        pong_game : entity work.pong_SM
+        generic map(
+            g_VIDEO_WIDTH=> g_VIDEO_WIDTH
         )
-        port map (
-            i_clk=> r_clk25,  --25
-			i_reset => r_reset,
-            i_x=> r_x,
-            i_y=> r_y,
-            i_btn_up=> r_switch(0),
-            i_btn_dwn=> r_switch(1),
-            o_y_paddle_top=> open,
-            o_y_paddle_dwn=> open,
-            o_draw_paddle=> r_draw_paddle1
+        port map(
+            i_clk=> r_clk25,
+            i_reset=>r_reset,
+            i_start=>r_start,
+            i_btn_up_P1=>r_switch(0),
+            i_btn_dwn_P1=>r_switch(1),
+            i_btn_up_P2=>r_switch(2),
+            i_btn_dwn_P2=>r_switch(3),
+            o_hs=>w_hs,
+            o_vs=>w_vs,
+            o_de=>w_de,
+            o_blue=>w_blue,
+            o_green=>w_green,
+            o_red=>w_red
         );
+    
 
-
-        --paddle 2
-        paddle2: entity work.pong_paddle
-        generic map (
-        g_X_LOCATION_PADDLE=> pc_X_PADDLE_PLAYER2
-        )
-        port map (
-            i_clk=> r_clk25,  --25
-			i_reset => r_reset,
-            i_x=> r_x,
-            i_y=> r_y,
-            i_btn_up=> r_switch(2),
-            i_btn_dwn=> r_switch(3),
-            o_y_paddle_top=> open,
-            o_y_paddle_dwn=> open,
-            o_draw_paddle=> r_draw_paddle2
-        );
-
-        --border
-        border: entity work.pong_border
-        port map (
-            i_x=> r_x,
-            i_y => r_y,
-            o_draw_border => r_draw_border
-        );
-
-
-        --ball
-        ball: entity work.pong_ball
-        port map (
-            i_clk => r_clk25,
-            i_reset => r_reset,
-				i_start => r_start,
-            i_x => r_x,
-            i_y => r_y,
-            o_x_ball => open,
-            o_y_ball => open,
-            o_draw_ball => r_draw_ball
-        );
-
-
-    r_draw <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_border='1' or r_draw_ball ='1'  else '0';
-
-            r_blue <=   (others=>'0') when r_draw_ball = '1' and r_de = '1' else  --ball yellow
-                        (others=>'1') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue 
-                        (others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
-                        (others=>'1') when r_draw_border = '1' and r_de = '1' else  --border white
-                        (others=>'0');
-            r_green <=  (others=>'1') when r_draw_ball = '1' and r_de = '1' else  --ball yellow
-                        (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
-						(others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
-						(others=>'1') when r_draw_border = '1' and r_de = '1' else --border white
-                "01100000" when r_draw= '0' and r_de = '1' else --background green-red
-                (others=>'0');
-            r_red <=  (others=>'1') when r_draw_ball = '1' and r_de = '1' else  --ball yellow
-                    (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
-					(others=>'1') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
-					(others=>'1') when r_draw_border = '1' and r_de = '1' else --border white
-                "00001010" when r_draw= '0' and r_de = '1' else --background green-red
-                (others=>'0');
-
-    o_hdmi_clk<= r_clk25;
-    o_hdmi_HS<= r_hs;
-    o_hdmi_VS<= r_VS;
-    o_hdmi_DE<= r_DE;
-    o_hdmi_DATA_BUS<= r_red & r_green & r_blue;
+        o_hdmi_clk<= r_clk25;
+        o_hdmi_HS<= w_hs;
+        o_hdmi_VS<= w_VS;
+        o_hdmi_DE<= w_DE;
+        o_hdmi_DATA_BUS<= w_red & w_green & w_blue;
 
     end RTL;
