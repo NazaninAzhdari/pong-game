@@ -7,11 +7,12 @@ use work.pongPack.ALL;
 
 entity pong_paddle is
     generic (
-        g_X_LOCATION_PADDLE   :   integer     :=0  --top left of the paddle 
-                                                 --set to X_PADDLE_PLAYER1 or X_PADDLE_PLAYER2
+        g_X_LOCATION_PADDLE   :   integer     :=0   --top left of the paddle 
+                                                    --set to X_PADDLE_PLAYER1 or X_PADDLE_PLAYER2
     );
     port (
-        i_clk           :       in      STD_LOGIC; --50MHz clock
+        i_clk           :       in      STD_LOGIC; --25MHz clock
+		  i_reset			:		  in 		 STD_LOGIC;
         i_x             :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_y             :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_btn_up        :       in      STD_LOGIC;
@@ -39,32 +40,43 @@ architecture RTL of pong_paddle is
         process(i_clk) is
             begin
                 if rising_edge(i_clk) then
+					 if i_reset = '1' then
+							r_y_paddle_top <= 11;
+							r_y_paddle_dwn <= 17;
+							r_paddle_move_count <= 0;
+					else
 						if r_btn_DV = '1' then
-                    if r_paddle_move_count < pc_PADDLE_SPEED-1 then
-                        r_paddle_move_count <= r_paddle_move_count + 1;
+                        if r_paddle_move_count < pc_PADDLE_SPEED-1 then
+                            r_paddle_move_count <= r_paddle_move_count + 1;
+                        else
+                            r_paddle_move_count <= 0;
+
+                            if i_btn_up = '1' then 
+                                if r_y_paddle_top /=0 then
+                                    r_y_paddle_top <= r_y_paddle_top - 1;
+                                    r_y_paddle_dwn <= r_y_paddle_dwn - 1;
+                                elsif r_y_paddle_top = 0 then
+                                    r_y_paddle_top <= r_y_paddle_top;
+                                    r_y_paddle_dwn <= r_y_paddle_dwn;
+                                end if;
+                            
+                            elsif i_btn_dwn = '1' then 
+                                if r_y_paddle_dwn /= pc_GAME_HEIGHT-1 then
+                                    r_y_paddle_top <= r_y_paddle_top + 1;
+                                    r_y_paddle_dwn <= r_y_paddle_dwn + 1;
+                                elsif r_y_paddle_dwn = pc_GAME_HEIGHT-1 then
+                                    r_y_paddle_top <= r_y_paddle_top;
+                                    r_y_paddle_dwn <= r_y_paddle_dwn;
+                                end if;
+                            end if;
+
+                        end if; 
                     else
                         r_paddle_move_count <= 0;
-							
-							
-						
-                            
-                                if i_btn_up = '1' and r_paddle_move_count = pc_PADDLE_SPEED -1 then 
-											if r_y_paddle_top /=0 then
-                                    r_y_paddle_top <= r_y_paddle_top + 1;
-                                    r_y_paddle_dwn <= r_y_paddle_dwn -1;
-											end if;
-                                
-
-                                elsif i_btn_dwn = '1' and r_paddle_move_count = pc_PADDLE_SPEED -1 then 
-											if r_y_paddle_dwn /= pc_GAME_HEIGHT-1 then
-                                    r_y_paddle_top <= r_y_paddle_top - 1;
-                                    r_y_paddle_dwn <= r_y_paddle_dwn + 1;
-												end if;
-                                end if;
-                        end if;    
                     end if;
+						 end if;
                 end if;
-					 end process;
+			end process;
             
 				
 				process(i_clk) is
@@ -75,9 +87,9 @@ architecture RTL of pong_paddle is
                                         and (r_y < r_y_paddle_dwn )
                                         and (r_y > r_y_paddle_top) then
 													 
-													 o_draw_paddle <= '1';
-													 else
-													 o_draw_paddle <= '0';
+								o_draw_paddle <= '1';
+							else
+								o_draw_paddle <= '0';
 							end if;
 						end if;
 					end process;

@@ -137,7 +137,8 @@ architecture RTL of pong_top is
         g_X_LOCATION_PADDLE=> pc_X_PADDLE_PLAYER1
         )
         port map (
-            i_clk=> i_clk,  --50
+            i_clk=> r_clk25,  --25
+				i_reset => r_reset,
             i_x=> r_x,
             i_y=> r_y,
             i_btn_up=> r_switch(0),
@@ -154,7 +155,8 @@ architecture RTL of pong_top is
         g_X_LOCATION_PADDLE=> pc_X_PADDLE_PLAYER2
         )
         port map (
-            i_clk=> i_clk,  --50
+            i_clk=> r_clk25,  --25
+				i_reset => r_reset,
             i_x=> r_x,
             i_y=> r_y,
             i_btn_up=> r_switch(2),
@@ -173,11 +175,22 @@ architecture RTL of pong_top is
         );
 
 
-        r_draw <= '1' when r_draw_paddle1 = '1' or r_draw_paddle2 = '1' or r_draw_border = '1' else '0';
+    r_draw <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_border='1'  else '0';
 
-    r_blue <= (others=>'1') when r_de = '1' else (others=>'0');
-    r_green <= (others=>'1') when r_de = '1' else (others=>'0');
-    r_red <= (others=>'1') when r_draw = '1' and r_de = '1' else (others=>'0');
+    r_blue <= (others=>'1') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue 
+					(others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
+					(others=>'1') when r_draw_border = '1' and r_de = '1' else  --border white
+					(others=>'0');
+    r_green <=  (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
+						(others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
+						(others=>'1') when r_draw_border = '1' and r_de = '1' else --border white
+                "01100000" when r_draw= '0' and r_de = '1' else --background green-red
+                (others=>'0');
+    r_red <=  (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
+					(others=>'1') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
+					(others=>'1') when r_draw_border = '1' and r_de = '1' else --border white
+                "00001010" when r_draw= '0' and r_de = '1' else --background green-red
+                (others=>'0');
 
     o_hdmi_clk<= r_clk25;
     o_hdmi_HS<= r_hs;

@@ -32,7 +32,7 @@ package pongPack is
     --parameters of paddle
     constant    pc_PADDLE_WIDTH    :   integer     :=2;
     constant    pc_PADDLE_HEIGHT   :   integer     :=6;
-    constant    pc_PADDLE_SPEED    :   integer     :=2500000;
+    constant    pc_PADDLE_SPEED    :   integer     :=1250000;
     constant    pc_X_PADDLE_PLAYER1:   integer     :=3;               --left top corner of the paddle
     constant    pc_X_PADDLE_PLAYER2:   integer     :=pc_GAME_WIDTH-5; --left top corner of the paddle
 
