@@ -12,6 +12,7 @@ entity pong_top is
     port (
         i_clk       :   in      STD_LOGIC;  --50
         i_reset     :   in      STD_LOGIC;
+		  i_start	  :	in		  STD_LOGIC;
         i_switch    :   in      unsigned(3 downto 0);
 
         --output to hdmi
@@ -27,7 +28,8 @@ architecture RTL of pong_top is
     signal r_clk25    :    STD_LOGIC                :='0';
     signal r_switch   :    unsigned(3 downto 0)     :=(others=>'0');
     signal r_reset    :    STD_LOGIC                :='0';
-
+	 signal r_start    :    STD_LOGIC                :='0';
+	 
     signal w_x        :    unsigned(pc_VGA_BITS-1 downto 0) :=(others=>'0');
     signal w_y        :    unsigned(pc_VGA_BITS-1 downto 0) :=(others=>'0');
     signal r_hs       :    STD_LOGIC                 :='0';
@@ -40,6 +42,7 @@ architecture RTL of pong_top is
     signal r_draw_paddle1 :  STD_LOGIC    :='0';
     signal r_draw_paddle2 :  STD_LOGIC    :='0';
     signal r_draw_border  :  STD_LOGIC    :='0';
+    signal r_draw_ball    :  STD_LOGIC    :='0';
     signal r_draw         :  STD_LOGIC    :='0';
 
     signal r_blue         :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
@@ -113,7 +116,16 @@ architecture RTL of pong_top is
             o_debounced => r_reset
         );
 
-
+		  --debouncing start button
+        debouncing_start: entity work.debounce_filter 
+        generic map (
+            g_CLK_CYCLES => 500000
+        )
+        port map (
+            i_clk => i_clk, --50
+            i_bouncy => i_start,
+            o_debounced => r_start
+        );
 
         --synchronizing
         sync : entity work.HVsync
@@ -138,7 +150,7 @@ architecture RTL of pong_top is
         )
         port map (
             i_clk=> r_clk25,  --25
-				i_reset => r_reset,
+			i_reset => r_reset,
             i_x=> r_x,
             i_y=> r_y,
             i_btn_up=> r_switch(0),
@@ -156,7 +168,7 @@ architecture RTL of pong_top is
         )
         port map (
             i_clk=> r_clk25,  --25
-				i_reset => r_reset,
+			i_reset => r_reset,
             i_x=> r_x,
             i_y=> r_y,
             i_btn_up=> r_switch(2),
@@ -175,18 +187,35 @@ architecture RTL of pong_top is
         );
 
 
-    r_draw <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_border='1'  else '0';
+        --ball
+        ball: entity work.pong_ball
+        port map (
+            i_clk => r_clk25,
+            i_reset => r_reset,
+				i_start => r_start,
+            i_x => r_x,
+            i_y => r_y,
+            o_x_ball => open,
+            o_y_ball => open,
+            o_draw_ball => r_draw_ball
+        );
 
-    r_blue <= (others=>'1') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue 
-					(others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
-					(others=>'1') when r_draw_border = '1' and r_de = '1' else  --border white
-					(others=>'0');
-    r_green <=  (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
+
+    r_draw <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_border='1' or r_draw_ball ='1'  else '0';
+
+            r_blue <=   (others=>'0') when r_draw_ball = '1' and r_de = '1' else  --ball yellow
+                        (others=>'1') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue 
+                        (others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
+                        (others=>'1') when r_draw_border = '1' and r_de = '1' else  --border white
+                        (others=>'0');
+            r_green <=  (others=>'1') when r_draw_ball = '1' and r_de = '1' else  --ball yellow
+                        (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
 						(others=>'0') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
 						(others=>'1') when r_draw_border = '1' and r_de = '1' else --border white
                 "01100000" when r_draw= '0' and r_de = '1' else --background green-red
                 (others=>'0');
-    r_red <=  (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
+            r_red <=  (others=>'1') when r_draw_ball = '1' and r_de = '1' else  --ball yellow
+                    (others=>'0') when r_draw_paddle1 = '1' and r_de = '1' else --paddle 1 becomes blue
 					(others=>'1') when r_draw_paddle2 = '1' and r_de = '1' else --paddle 2 becomes red
 					(others=>'1') when r_draw_border = '1' and r_de = '1' else --border white
                 "00001010" when r_draw= '0' and r_de = '1' else --background green-red

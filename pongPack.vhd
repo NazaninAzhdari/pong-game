@@ -37,6 +37,10 @@ package pongPack is
     constant    pc_X_PADDLE_PLAYER2:   integer     :=pc_GAME_WIDTH-5; --left top corner of the paddle
 
     --parameter of ball
+    constant    pc_BALL_SIZE        :   integer     :=3;
+    constant    pc_BALL_SPEED       :   integer     :=1250000;
+    constant    pc_X_BALL_START     :   integer     :=pc_X_MIDDLE_BORDER;  --center of the ball
+    constant    pc_Y_BALL_START     :   integer     :=pc_GAME_HEIGHT/2 -1; --center of the ball
 
 
 
