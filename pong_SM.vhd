@@ -13,10 +13,10 @@ entity pong_SM is
         i_clk           :   in      STD_LOGIC; --25MHz
         i_reset         :   in      STD_LOGIC;
         i_start         :   in      STD_LOGIC;
-        i_btn_up_P1     :   in      STD_LOGIC;
-        i_btn_dwn_P1    :   in      STD_LOGIC;
-        i_btn_up_P2     :   in      STD_LOGIC;
-        i_btn_dwn_P2    :   in      STD_LOGIC;
+        i_btn_up_P1_L     :   in      STD_LOGIC;
+        i_btn_dwn_P1_L    :   in      STD_LOGIC;
+        i_btn_up_P2_L     :   in      STD_LOGIC;
+        i_btn_dwn_P2_L    :   in      STD_LOGIC;
         o_hs            :   out     STD_LOGIC;
         o_vs            :   out     STD_LOGIC;
         o_de            :   out     STD_LOGIC;
@@ -48,13 +48,19 @@ architecture RTL of pong_SM is
     signal r_draw_paddle1         :  STD_LOGIC    :='0';
     signal r_draw_paddle2         :  STD_LOGIC    :='0';
     signal r_draw_ball            :  STD_LOGIC    :='0';
-    signal r_draw_border          :  STD_LOGIC    :='0';
-    signal r_draw_start           :  STD_LOGIC    :='0';
-    signal r_draw_gameOver        :  STD_LOGIC    :='0';
-    signal r_draw_tool            :  STD_LOGIC    :='0';
-    signal r_draw_start_page      :  STD_LOGIC    :='0';
-    signal r_draw_game_page       :  STD_LOGIC    :='0';
-    signal r_draw_gameOver_page   :  STD_LOGIC    :='0';
+    signal r_draw_edge_border     :  STD_LOGIC    :='0';
+    signal r_draw_middle_border   :  STD_LOGIC    :='0';
+    signal r_draw_whole_border    :  STD_LOGIC    :='0';
+    signal r_draw_start_txt       :  STD_LOGIC    :='0';
+    signal r_draw_gameOver_txt    :  STD_LOGIC    :='0';
+    signal r_draw_total_start     :  STD_LOGIC    :='0';
+    signal r_draw_total_game      :  STD_LOGIC    :='0';
+    signal r_draw_total_gameOver  :  STD_LOGIC    :='0';
+    
+    --determine which page to dry, start page, game page or game over page.
+    signal r_draw_start_DV        :  STD_LOGIC    :='0';
+    signal r_draw_game_DV         :  STD_LOGIC    :='0';
+    signal r_draw_gameOver_DV     :  STD_LOGIC    :='0';
 
     --color data bus
     signal r_blue         :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
@@ -70,7 +76,7 @@ architecture RTL of pong_SM is
     signal r_y_paddle2_dwn_int       :   integer; 
 
     --state machine
-    type pong_game is (IDLE, GAME_START, GAME_RUNNING, END_GAME);
+    type pong_game is (IDLE, GAME_START, COUNT, GAME_RUNNING, END_GAME);
     signal r_SM         :   pong_game       :=IDLE;
 
     --score signals
@@ -103,32 +109,34 @@ architecture RTL of pong_SM is
 
                         case r_SM is
                             when IDLE =>
-                                r_draw_start_page <= '1';
-                                r_draw_game_page <= '0';
-                                r_draw_gameOver_page <= '0';
+                                r_draw_start_DV <= '1';
+                                r_draw_game_DV <= '0';
+                                r_draw_gameOver_DV <= '0';
 
                                 if i_start= '0' and w_start = '1' then  --falling edge of start button, go from sart page to game page
                                     r_SM <= GAME_START;
                                 end if;
                             
                             when GAME_START =>
-                                r_draw_start_page <= '0';
-                                r_draw_game_page <= '1';
-                                r_draw_gameOver_page <= '0';
+                                r_draw_start_DV <= '0';
+                                r_draw_game_DV <= '1';
+                                r_draw_gameOver_DV <= '0';
 
-                                if i_start= '1'  then         --falling edge of start button, start the game
-													 if r_start_counter < pc_START_LIMIT-1 then   -- bull starts to move after some seconds
-                                        r_start_counter <= r_start_counter + 1;
-                                    else
-                                        r_start_counter <= 0;
-                              
-                                        r_SM <= GAME_RUNNING;
+                                if i_start= '0' and w_start = '1' then         --falling edge of start button, start the game
+                                        r_SM <= COUNT;
                                     end if;
-												end if;
-                                        
+									
+                            when COUNT =>
+                                if r_start_counter < pc_START_LIMIT then      -- bull starts to move after some seconds
+                                    r_start_counter <= r_start_counter + 1;
+                                else
+                                    r_start_counter <= 0;  
+                                    r_SM <= GAME_RUNNING;
+                                end if;
+                                 
 
                             when GAME_RUNNING =>
-											r_start <= '1';
+								r_start <= '1';
                                 if r_x_ball_int = pc_X_PADDLE_PLAYER1 then
                                     if r_y_ball_int <= r_y_paddle1_dwn_int and r_y_ball_int >= r_y_paddle1_top_int then
                                         r_score_p1 <= r_score_p1 + 1;
@@ -149,9 +157,9 @@ architecture RTL of pong_SM is
                             when END_GAME =>
                                 r_start <= '0';
 
-                                r_draw_start_page <= '0';
-                                r_draw_game_page <= '0';
-                                r_draw_gameOver_page <= '1';
+                                r_draw_start_DV <= '0';
+                                r_draw_game_DV <= '0';
+                                r_draw_gameOver_DV <= '1';
 
                                 if i_start= '0' and w_start = '1' then  --falling edge of start button, go from game over page to game page
                                     r_SM <= GAME_START;
@@ -195,8 +203,8 @@ architecture RTL of pong_SM is
 			i_start => r_start,
             i_x=> r_x,
             i_y=> r_y,
-            i_btn_up=> i_btn_up_P1,
-            i_btn_dwn=> i_btn_dwn_P1,
+            i_btn_up_L=> i_btn_up_P1_L,
+            i_btn_dwn_L=> i_btn_dwn_P1_L,
             o_y_paddle_top=> r_y_paddle1_top,
             o_y_paddle_dwn=> r_y_paddle1_dwn,
             o_draw_paddle=> r_draw_paddle1
@@ -212,8 +220,8 @@ architecture RTL of pong_SM is
 			i_start => r_start,
             i_x=> r_x,
             i_y=> r_y,
-            i_btn_up=> i_btn_up_P2,
-            i_btn_dwn=> i_btn_dwn_P2,
+            i_btn_up_L=> i_btn_up_P2_L,
+            i_btn_dwn_L=> i_btn_dwn_P2_L,
             o_y_paddle_top=> r_y_paddle2_top,
             o_y_paddle_dwn=> r_y_paddle2_dwn,
             o_draw_paddle=> r_draw_paddle2
@@ -236,7 +244,8 @@ architecture RTL of pong_SM is
         port map (
             i_x=> r_x,
             i_y => r_y,
-            o_draw_border => r_draw_border
+            o_draw_edge_border => r_draw_edge_border,
+            o_draw_middle_border => r_draw_middle_border
         );
 
         --drawing start page
@@ -244,7 +253,7 @@ architecture RTL of pong_SM is
         port map (
             i_x=> r_x,
             i_y => r_y,
-            o_draw_start => r_draw_start
+            o_draw_start_txt => r_draw_start_txt
         );
 
         --drawing game over page
@@ -252,7 +261,7 @@ architecture RTL of pong_SM is
         port map (
             i_x=> r_x,
             i_y => r_y,
-            o_draw_gameOver => r_draw_gameOver
+            o_draw_gameOver_txt => r_draw_gameOver_txt
         );
 
         --converting unsigned signals to integer
@@ -265,44 +274,44 @@ architecture RTL of pong_SM is
         
         
 
-        r_blue <=   (others=>'1') when r_draw_start_page = '1'     and r_draw_start='1'         and r_de = '1' else  --draw start text in start page(white)
-                    (others=>'1') when r_draw_start_page = '1'     and r_draw_start='0'         and r_de = '1' else  --draw background of start page(green-blue)
-                    (others=>'0') when r_draw_game_page = '1'           and r_draw_ball ='1'         and r_de = '1' else  --draw ball in game page(yellow)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_paddle1 ='1'      and r_de = '1' else  --paddle 1 in game page(blue)
-                    (others=>'0') when r_draw_game_page = '1'           and r_draw_paddle2 ='1'      and r_de = '1' else  --paddle 2 in game page(red)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_border ='1'       and r_de = '1' else  --border in game page(white)
-                    (others=>'0') when r_draw_game_page = '1'           and r_draw_tool= '0'         and r_de = '1' else  --background in game page(green-red)
-                    (others=>'1') when r_draw_gameOver_page = '1'  and r_draw_gameOver ='1'     and r_de = '1' else  --draw game over text in end page(white)
-                    (others=>'0') when r_draw_gameOver_page = '1'  and r_draw_gameOver='0'      and r_de = '1' else  --draw background of start page(red)
-                    (others=>'0');
-
-        r_green <=  (others=>'1') when r_draw_start_page = '1'     and r_draw_start='1'         and r_de = '1' else  --draw start text in start page(white)
-                    (others=>'1') when r_draw_start_page = '1'     and r_draw_start='0'         and r_de = '1' else  --draw background of start page(green-blue)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_ball ='1'         and r_de = '1' else  --draw ball in game page(yellow)
-                    (others=>'0') when r_draw_game_page = '1'           and r_draw_paddle1 ='1'      and r_de = '1' else  --paddle 1 in game page(blue)
-                    (others=>'0') when r_draw_game_page = '1'           and r_draw_paddle2 ='1'      and r_de = '1' else  --paddle 2 in game page(red)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_border ='1'       and r_de = '1' else  --border in game page(white)
-                    "01100000"    when r_draw_game_page = '1'           and r_draw_tool= '0'         and r_de = '1' else  --background in game page(green-red)
-                    (others=>'1') when r_draw_gameOver_page = '1'  and r_draw_gameOver ='1'     and r_de = '1' else  --draw game over text in end page(white)
-                    (others=>'0') when r_draw_gameOver_page = '1'  and r_draw_gameOver='0'      and r_de = '1' else  --draw background of start page(red)
-                    (others=>'0');
-
-        r_red   <=  (others=>'1') when r_draw_start_page = '1'     and r_draw_start='1'         and r_de = '1' else  --draw start text in start page(white)
-                    (others=>'0') when r_draw_start_page = '1'     and r_draw_start='0'         and r_de = '1' else  --draw background of start page(green-blue)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_ball ='1'         and r_de = '1' else  --draw ball in game page(yellow)
-                    (others=>'0') when r_draw_game_page = '1'           and r_draw_paddle1 ='1'      and r_de = '1' else  --paddle 1 in game page(blue)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_paddle2 ='1'      and r_de = '1' else  --paddle 2 in game page(red)
-                    (others=>'1') when r_draw_game_page = '1'           and r_draw_border ='1'       and r_de = '1' else  --border in game page(white)
-                    "00001010"    when r_draw_game_page = '1'           and r_draw_tool= '0'         and r_de = '1' else  --background in game page(green-red)
-                    (others=>'1') when r_draw_gameOver_page = '1'  and r_draw_gameOver ='1'     and r_de = '1' else  --draw game over text in end page(white)
-                    (others=>'1') when r_draw_gameOver_page = '1'  and r_draw_gameOver='0'      and r_de = '1' else  --draw background of start page(red)
+        r_blue <=   (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
+                    (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
+                    (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
+                    (others=>'0') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver='0'  and r_de = '1' else  --draw background of start page(red)
                     (others=>'0');
         
+        r_green <=  (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
+                    (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
+                    "01100000"    when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
+                    (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
+                    (others=>'0') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver='0'  and r_de = '1' else  --draw background of start page(red)
+                    (others=>'0');
 
+        r_red <=    (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
+                    (others=>'0') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
+                    "00001010"    when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
+                    (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
+                    (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver='0'  and r_de = '1' else  --draw background of start page(red)
+                    (others=>'0');
 
-
-
-        r_draw_tool <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_border='1' or r_draw_ball ='1'  else '0';
+     
+        r_draw_total_start <= '1' when r_draw_edge_border = '1' or r_draw_start_txt = '1' else '0';
+        r_draw_total_gameOver <= '1' when r_draw_edge_border = '1' or r_draw_gameOver_txt = '1' else '0';
+        r_draw_whole_border <= '1' when r_draw_edge_border = '1' or r_draw_middle_border = '1' else '0';
+        r_draw_total_game <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_whole_border='1' or r_draw_ball ='1'  else '0';
 
 		
         --connecting signals to output signals

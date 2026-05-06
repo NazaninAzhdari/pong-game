@@ -11,15 +11,15 @@ entity pong_paddle is
                                                     --set to X_PADDLE_PLAYER1 or X_PADDLE_PLAYER2
     );
     port (
-        i_clk           :       in      STD_LOGIC; --25MHz clock
-		i_start			:		in 		STD_LOGIC;
-        i_x             :       in      unsigned(pc_GAME_BITS-1 downto 0);
-        i_y             :       in      unsigned(pc_GAME_BITS-1 downto 0);
-        i_btn_up        :       in      STD_LOGIC;
-        i_btn_dwn       :       in      STD_LOGIC;
+        i_clk             :       in      STD_LOGIC; --25MHz clock
+		i_start			  :		in 		STD_LOGIC;
+        i_x               :       in      unsigned(pc_GAME_BITS-1 downto 0);
+        i_y               :       in      unsigned(pc_GAME_BITS-1 downto 0);
+        i_btn_up_L        :       in      STD_LOGIC;
+        i_btn_dwn_L       :       in      STD_LOGIC;
         o_y_paddle_top  :       out     unsigned(pc_GAME_BITS-1 downto 0);
-        o_y_paddle_dwn  :       out     unsigned(pc_GAME_BITS-1 downto 0);
-        o_draw_paddle   :       out     STD_LOGIC
+        o_y_paddle_dwn :       out     unsigned(pc_GAME_BITS-1 downto 0);
+        o_draw_paddle     :       out     STD_LOGIC
     );
 end pong_paddle;
 
@@ -33,7 +33,7 @@ architecture RTL of pong_paddle is
 
 
     begin
-        r_btn_DV <= i_btn_up xor i_btn_dwn;
+        r_btn_DV <= i_btn_up_L xor i_btn_dwn_L;
         r_x <= to_integer(i_x);
         r_y <= to_integer(i_y);
 
@@ -51,7 +51,7 @@ architecture RTL of pong_paddle is
                             else
                                 r_paddle_move_count <= 0;
 
-                                if i_btn_up = '1' then 
+                                if i_btn_up_L = '0' then 
                                     if r_y_paddle_top /= pc_Y_TOP_BORDER+1 then
                                         r_y_paddle_top <= r_y_paddle_top - 1;
                                         r_y_paddle_dwn <= r_y_paddle_dwn - 1;
@@ -60,7 +60,7 @@ architecture RTL of pong_paddle is
                                         r_y_paddle_dwn <= r_y_paddle_dwn;
                                     end if;
                                 
-                                elsif i_btn_dwn = '1' then 
+                                elsif i_btn_dwn_L = '0' then 
                                     if r_y_paddle_dwn /= pc_Y_BUTTOM_BORDER-1 then
                                         r_y_paddle_top <= r_y_paddle_top + 1;
                                         r_y_paddle_dwn <= r_y_paddle_dwn + 1;
