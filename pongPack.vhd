@@ -53,7 +53,7 @@ package pongPack is
     constant    pc_Y_BALL_START     :   integer     :=pc_GAME_HEIGHT/2 -1; --center of the ball
 
 
-    constant    pc_START_LIMIT      :   integer     :=2500000;
+    constant    pc_START_LIMIT      :   integer     :=25000000; --one second
   
 
 end package;

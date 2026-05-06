@@ -53,7 +53,7 @@ architecture RTL of pong_top is
         --debouncing switches
         debouncing0: entity work.debounce_filter 
         generic map (
-            g_CLK_CYCLES => 500000
+            g_CLK_CYCLES => 1
         )
         port map (
             i_clk => i_clk, --50
@@ -63,7 +63,7 @@ architecture RTL of pong_top is
 
         debouncing1: entity work.debounce_filter 
         generic map (
-            g_CLK_CYCLES => 500000
+            g_CLK_CYCLES => 1
         )
         port map (
             i_clk => i_clk, --50
@@ -73,7 +73,7 @@ architecture RTL of pong_top is
 
         debouncing2: entity work.debounce_filter 
         generic map (
-            g_CLK_CYCLES => 500000
+            g_CLK_CYCLES => 1
         )
         port map (
             i_clk => i_clk, --50
@@ -83,7 +83,7 @@ architecture RTL of pong_top is
 
         debouncing3: entity work.debounce_filter 
         generic map (
-            g_CLK_CYCLES => 500000
+            g_CLK_CYCLES => 1
         )
         port map (
             i_clk => i_clk, --50
@@ -124,10 +124,10 @@ architecture RTL of pong_top is
             i_clk=> r_clk25,
             i_reset=>r_reset,
             i_start=>r_start,
-            i_btn_up_P1=>r_switch(0),
-            i_btn_dwn_P1=>r_switch(1),
-            i_btn_up_P2=>r_switch(2),
-            i_btn_dwn_P2=>r_switch(3),
+            i_btn_up_P1_L=>r_switch(0),
+            i_btn_dwn_P1_L=>r_switch(1),
+            i_btn_up_P2_L=>r_switch(2),
+            i_btn_dwn_P2_L=>r_switch(3),
             o_hs=>w_hs,
             o_vs=>w_vs,
             o_de=>w_de,
