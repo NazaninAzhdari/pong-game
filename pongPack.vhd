@@ -1,6 +1,18 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
 package pongPack is
 	--functions
     function pf_log2ceil(value:    integer) return integer;
+	 function pf_draw_letter_S(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_T(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_A(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_R(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_G(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_M(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_E(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_O(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_letter_V(x: integer; y: integer) return STD_LOGIC;
 	 
     --parameters of VGA 640*480 @ 60Hz timing
     --horizontal parameters
@@ -41,7 +53,7 @@ package pongPack is
     constant    pc_Y_BALL_START     :   integer     :=pc_GAME_HEIGHT/2 -1; --center of the ball
 
 
-
+    constant    pc_START_LIMIT      :   integer     :=2500000;
   
 
 end package;
@@ -73,9 +85,9 @@ package body pongPack is
        -- "00001",
        -- "01110")
             begin
-                if (y=0 or y=3 or y=6) and (x>=1 and x<=3)
-                or (y=1 or y= 2) and (x=0)
-                or (y=4 or y=5) and (x=4)
+                if ((y=0 or y=3 or y=6) and (x>=1 and x<=3))
+                or ((y=1 or y= 2) and (x=0))
+                or ((y=4 or y=5) and (x=4)) then
                     return '1';
                 else 
                     return '0';
@@ -110,8 +122,8 @@ package body pongPack is
         --"10001",
         --"10001")
             begin
-                if (y=0) and (x>=1 and x<=3) 
-                or (y=1 or y=2 or y=4 or y=5 or y=6) and (x=0 or x=4) 
+                if ((y=0) and (x>=1 and x<=3))
+                or ((y=1 or y=2 or y=4 or y=5 or y=6) and (x=0 or x=4))
                 or (y=3) then
                     return '1';
                 else 
@@ -129,10 +141,10 @@ package body pongPack is
         --"10010",
         --"10001")
             begin
-                if (y=0 or y=3) and (x>=0 and x<=3) 
-                or (y=1 or y=2 or y=6) and (x=0 or x=4) 
-                or (y=4) and (x=0 or x=2)
-                or (y=5) and (x=0 or x=3) then
+                if ((y=0 or y=3) and (x>=0 and x<=3))
+                or ((y=1 or y=2 or y=6) and (x=0 or x=4)) 
+                or ((y=4) and (x=0 or x=2))
+                or ((y=5) and (x=0 or x=3)) then
                     return '1';
                 else 
                     return '0';
@@ -150,9 +162,9 @@ package body pongPack is
             --"10000",
             --"11111")
             begin
-                if (y=0 or y=6)  
-                or (y=1 or y=2 or y=4 or y=5) and (x=0) 
-                or (y=3) and (x>=0 and x<=3) then
+                if ((y=0 or y=6))
+                or ((y=1 or y=2 or y=4 or y=5) and (x=0))
+                or ((y=3) and (x>=0 and x<=3)) then
                     return '1';
                 else 
                     return '0';
@@ -169,10 +181,10 @@ package body pongPack is
             --"10001",
             --"01110")
             begin
-                if (y=0 or y=6) and (x>=1 and x<=3) 
-                or (y=1 or y=4 or y=5) and (x=0 or x=4) 
-                or (y=2 or y=3) and (x=0)
-                or (y=3) and (x>=2 and x<=4) then
+                if ((y=0 or y=6) and (x>=1 and x<=3)) 
+                or ((y=1 or y=4 or y=5) and (x=0 or x=4))
+                or ((y=2 or y=3) and (x=0))
+                or ((y=3) and (x>=2 and x<=4)) then
                     return '1';
                 else 
                     return '0';
@@ -189,9 +201,9 @@ package body pongPack is
             --"10001",
             --"10001")
             begin
-                if (y=0 or y=3 or y=4 or y=5 or y=6) and (x=0 or x=4) 
-                or (y=1) and (x/=2) 
-                or (y=2) and (x/=1 and x/=3) then
+                if ((y=0 or y=3 or y=4 or y=5 or y=6) and (x=0 or x=4))
+                or ((y=1) and (x/=2))
+                or ((y=2) and (x/=1 and x/=3)) then
                     return '1';
                 else 
                     return '0';
@@ -208,8 +220,8 @@ package body pongPack is
             --"10001",
             --"01110")
             begin
-                if (y>=1 and y<=5) and (x=0 or x=4) 
-                or (y=0 or y=6) and (x>=1 and x<=3) then
+                if ((y>=1 and y<=5) and (x=0 or x=4))
+                or ((y=0 or y=6) and (x>=1 and x<=3)) then
                     return '1';
                 else 
                     return '0';
@@ -226,9 +238,9 @@ package body pongPack is
             --"01010",
             --"00100")
             begin
-                if (y>=0 and y<=3) and (x=0 or x=4) 
-                or (y=4 or y=5) and (x=1 or x=3) 
-                or (y=6) and (x=2) then
+                if ((y>=0 and y<=3) and (x=0 or x=4))
+                or ((y=4 or y=5) and (x=1 or x=3)) 
+                or ((y=6) and (x=2)) then
                     return '1';
                 else 
                     return '0';

@@ -89,7 +89,7 @@ architecture RTL of pong_paddle is
 									o_draw_paddle <= '0';
 								end if;
 							else
-								if r_x = g_X_LOCATION_PADDLE + 1 and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
+								if r_x = g_X_LOCATION_PADDLE - 1 and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
 									o_draw_paddle <= '1';
 								else
 									o_draw_paddle <= '0';

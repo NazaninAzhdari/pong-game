@@ -21,15 +21,15 @@ architecture RTL of pong_gameOver is
         r_x <= to_integer(i_x);
         r_y <= to_integer(i_y);
 
-        o_draw_gameOver <=  draw_letter_G(r_x-9, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 9 and r_x <= 13 else
-                            draw_letter_A(r_x-15, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 15 and r_x <= 19 else
-                            draw_letter_M(r_x-21, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 21 and r_x <= 25 else
-                            draw_letter_E(r_x-27, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 27 and r_x <= 31 else
+        o_draw_gameOver <=  pf_draw_letter_G(r_x-9, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 9 and r_x <= 13 else
+                            pf_draw_letter_A(r_x-15, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 15 and r_x <= 19 else
+                            pf_draw_letter_M(r_x-21, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 21 and r_x <= 25 else
+                            pf_draw_letter_E(r_x-27, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 27 and r_x <= 31 else
 
-                            draw_letter_O(r_x-9, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 9 and r_x <= 13 else
-                            draw_letter_V(r_x-15, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 15 and r_x <= 19 else
-                            draw_letter_E(r_x-21, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 21 and r_x <= 25 else
-                            draw_letter_R(r_x-27, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 27 and r_x <= 31 else
+                            pf_draw_letter_O(r_x-9, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 9 and r_x <= 13 else
+                            pf_draw_letter_V(r_x-15, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 15 and r_x <= 19 else
+                            pf_draw_letter_E(r_x-21, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 21 and r_x <= 25 else
+                            pf_draw_letter_R(r_x-27, r_y-16) when r_y >= 16 and r_y <= 22 and r_x >= 27 and r_x <= 31 else
                             '0';
 
     end RTL;
