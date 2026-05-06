@@ -58,5 +58,182 @@ package body pongPack is
                 return v_bit_counter;
             end function;
 
+        
+
+        --------------------------------------------------------------------
+                               --Drawing Letters
+        --------------------------------------------------------------------
+        function pf_draw_letter_S(x: integer; y: integer) return STD_LOGIC is
+       --'S' => (
+       -- "01110",
+       -- "10000",
+       -- "10000",
+       -- "01110",
+       -- "00001",
+       -- "00001",
+       -- "01110")
+            begin
+                if (y=0 or y=3 or y=6) and (x>=1 and x<=3)
+                or (y=1 or y= 2) and (x=0)
+                or (y=4 or y=5) and (x=4)
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+
+
+        function pf_draw_letter_T(x: integer; y: integer) return STD_LOGIC is
+        --'T' => (
+        --"11111",
+        --"00100",
+        --"00100",
+        --"00100",
+        --"00100",
+        --"00100",
+        --"00100")
+            begin
+                if (y = 0) or (x=2) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+
+        function pf_draw_letter_A(x: integer; y: integer) return STD_LOGIC is
+        --'A' => (
+        --"01110",
+        --"10001",
+        --"10001",
+        --"11111",
+        --"10001",
+        --"10001",
+        --"10001")
+            begin
+                if (y=0) and (x>=1 and x<=3) 
+                or (y=1 or y=2 or y=4 or y=5 or y=6) and (x=0 or x=4) 
+                or (y=3) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+
+        function pf_draw_letter_R(x: integer; y: integer) return STD_LOGIC is
+        --'R' => (
+        --"11110",
+        --"10001",
+        --"10001",
+        --"11110",
+        --"10100",
+        --"10010",
+        --"10001")
+            begin
+                if (y=0 or y=3) and (x>=0 and x<=3) 
+                or (y=1 or y=2 or y=6) and (x=0 or x=4) 
+                or (y=4) and (x=0 or x=2)
+                or (y=5) and (x=0 or x=3) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+
+
+        function pf_draw_letter_E(x: integer; y: integer) return STD_LOGIC is
+            --'E' => (
+            --"11111",
+            --"10000",
+            --"10000",
+            --"11110",
+            --"10000",
+            --"10000",
+            --"11111")
+            begin
+                if (y=0 or y=6)  
+                or (y=1 or y=2 or y=4 or y=5) and (x=0) 
+                or (y=3) and (x>=0 and x<=3) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+
+        function pf_draw_letter_G(x: integer; y: integer) return STD_LOGIC is
+            --'G' => (
+            --"01110",
+            --"10001",
+            --"10000",
+            --"10111",
+            --"10001",
+            --"10001",
+            --"01110")
+            begin
+                if (y=0 or y=6) and (x>=1 and x<=3) 
+                or (y=1 or y=4 or y=5) and (x=0 or x=4) 
+                or (y=2 or y=3) and (x=0)
+                or (y=3) and (x>=2 and x<=4) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+
+        function pf_draw_letter_M(x: integer; y: integer) return STD_LOGIC is
+            --'M' => (
+            --"10001",
+            --"11011",
+            --"10101",
+            --"10001",
+            --"10001",
+            --"10001",
+            --"10001")
+            begin
+                if (y=0 or y=3 or y=4 or y=5 or y=6) and (x=0 or x=4) 
+                or (y=1) and (x/=2) 
+                or (y=2) and (x/=1 and x/=3) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+        
+        function pf_draw_letter_O(x: integer; y: integer) return STD_LOGIC is
+            --'O' => (
+            --"01110",
+            --"10001",
+            --"10001",
+            --"10001",
+            --"10001",
+            --"10001",
+            --"01110")
+            begin
+                if (y>=1 and y<=5) and (x=0 or x=4) 
+                or (y=0 or y=6) and (x>=1 and x<=3) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+        
+        function pf_draw_letter_V(x: integer; y: integer) return STD_LOGIC is
+            --'V' => (
+            --"10001",
+            --"10001",
+            --"10001",
+            --"10001",
+            --"01010",
+            --"01010",
+            --"00100")
+            begin
+                if (y>=0 and y<=3) and (x=0 or x=4) 
+                or (y=4 or y=5) and (x=1 or x=3) 
+                or (y=6) and (x=2) then
+                    return '1';
+                else 
+                    return '0';
+                end if;
+        end function;
+        
 
     end package body;
