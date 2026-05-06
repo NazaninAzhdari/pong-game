@@ -82,19 +82,13 @@ architecture RTL of pong_paddle is
 				process(i_clk) is
 					begin
 						if rising_edge(i_clk) then
-							if r_x < pc_X_MIDDLE_BORDER then
-								if r_x = g_X_LOCATION_PADDLE + 1	and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
+							
+								if r_x = g_X_LOCATION_PADDLE	and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
 									o_draw_paddle <= '1';
 								else
 									o_draw_paddle <= '0';
 								end if;
-							else
-								if r_x = g_X_LOCATION_PADDLE - 1 and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
-									o_draw_paddle <= '1';
-								else
-									o_draw_paddle <= '0';
-								end if;
-							end if;
+							
 							
 						end if;
 					end process;

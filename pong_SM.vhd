@@ -84,7 +84,7 @@ architecture RTL of pong_SM is
     signal r_score_p2        : integer   :=0;
     signal r_start_counter   : integer range 0 to pc_START_LIMIT   :=0;
 
-    signal r_reset        :   STD_LOGIC   :='0';
+
     signal r_start        :   STD_LOGIC   :='0';
     signal w_reset        :   STD_LOGIC   :='0';
     signal w_start        :   STD_LOGIC   :='0';
@@ -99,13 +99,12 @@ architecture RTL of pong_SM is
                     w_start <= i_start;
 
                     if i_reset = '0' and w_reset = '1' then --falling edge of the reset button will reset the game
-                        r_reset  <= '1';
                         r_start  <= '0';
                         r_score_P1 <= 0;
                         r_score_P2 <= 0;
                         r_SM       <= IDLE;
                     else
-                        r_reset <= '0';
+                        
 
                         case r_SM is
                             when IDLE =>
@@ -181,7 +180,7 @@ architecture RTL of pong_SM is
         sync : entity work.HVsync
         port map (
             i_clk=> i_clk,  --25MHz
-            i_reset=> r_reset,
+            i_reset=> '0',
             o_x=>w_x,
             o_y=>w_y,
             o_HS=>r_hs,
@@ -276,9 +275,11 @@ architecture RTL of pong_SM is
 
         r_blue <=   (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
                     (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
-                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+                    
                     (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
+						  (others=>'0') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+						  
                     (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
@@ -287,9 +288,11 @@ architecture RTL of pong_SM is
         
         r_green <=  (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
                     (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
-                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+                    
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
+						  (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+						  
                     (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
                     "01100000"    when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
@@ -298,9 +301,11 @@ architecture RTL of pong_SM is
 
         r_red <=    (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
                     (others=>'0') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
-                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+                    
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
                     (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
+						  (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+						  
                     (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
                     "00001010"    when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)

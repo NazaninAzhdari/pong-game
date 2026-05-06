@@ -44,8 +44,8 @@ package pongPack is
     --parameters of paddle
     constant    pc_PADDLE_HEIGHT   :   integer     :=6;
     constant    pc_PADDLE_SPEED    :   integer     :=1250000;
-    constant    pc_X_PADDLE_PLAYER1:   integer     :=pc_X_LEFT_BORDER+1;      --left top corner of the paddle
-    constant    pc_X_PADDLE_PLAYER2:   integer     :=pc_X_RIGHT_BORDER-1;     --left top corner of the paddle
+    constant    pc_X_PADDLE_PLAYER1:   integer     :=pc_X_LEFT_BORDER+2;      --left top corner of the paddle
+    constant    pc_X_PADDLE_PLAYER2:   integer     :=pc_X_RIGHT_BORDER-2;     --left top corner of the paddle
 
     --parameter of ball
     constant    pc_BALL_SPEED       :   integer     :=1250000;
@@ -53,7 +53,7 @@ package pongPack is
     constant    pc_Y_BALL_START     :   integer     :=pc_GAME_HEIGHT/2 -1; --center of the ball
 
 
-    constant    pc_START_LIMIT      :   integer     :=25000000; --one second
+    constant    pc_START_LIMIT      :   integer     :=12500000; --0.5 second
   
 
 end package;

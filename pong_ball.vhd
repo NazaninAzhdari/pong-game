@@ -49,18 +49,18 @@ architecture RTL of pong_ball is
                             r_move_count <= 0;
 
                             if r_x_ball < r_x_ball_nxt then
-                                if r_x_ball_nxt /= pc_X_RIGHT_BORDER-1 then
+                                if r_x_ball_nxt /= pc_X_PADDLE_PLAYER2 then
                                     r_x_ball <= r_x_ball_nxt;
                                     r_x_ball_nxt <= r_x_ball_nxt +1;
-                                elsif r_x_ball_nxt = pc_X_RIGHT_BORDER-1 then
+                                elsif r_x_ball_nxt = pc_X_PADDLE_PLAYER2 then
                                     r_x_ball <= r_x_ball_nxt;
                                     r_x_ball_nxt <= r_x_ball_nxt -1;
                                 end if;
                             elsif r_x_ball > r_x_ball_nxt then
-                                if r_x_ball_nxt /= pc_X_LEFT_BORDER+1 then
+                                if r_x_ball_nxt /= pc_X_PADDLE_PLAYER1 then
                                     r_x_ball <= r_x_ball_nxt;
                                     r_x_ball_nxt <= r_x_ball_nxt -1;
-                                elsif r_x_ball_nxt = pc_X_LEFT_BORDER+1 then
+                                elsif r_x_ball_nxt = pc_X_PADDLE_PLAYER1 then
                                     r_x_ball <= r_x_ball_nxt;
                                     r_x_ball_nxt <= r_x_ball_nxt +1;
                                 end if;
