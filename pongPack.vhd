@@ -54,6 +54,7 @@ package pongPack is
 
 
     constant    pc_START_LIMIT      :   integer     :=12500000; --0.5 second
+    constant    pc_SCORE_LIMIT      :   integer     :=9;
   
 
 end package;

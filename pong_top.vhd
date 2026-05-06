@@ -20,7 +20,10 @@ entity pong_top is
         o_hdmi_HS       :   out     STD_LOGIC;
         o_hdmi_VS       :   out     STD_LOGIC;
         o_hdmi_DE       :   out     STD_LOGIC;
-        o_hdmi_DATA_BUS :   out     unsigned(23 downto 0)
+        o_hdmi_DATA_BUS :   out     unsigned(23 downto 0);
+        o_7seg_P1       :   out     unsigned(6 downto 0);
+        o_7seg_P2       :   out     unsigned(6 downto 0);
+        o_7seg_sign     :   out     unsigned(6 downto 0)
     );
 end pong_top;
 
@@ -37,6 +40,12 @@ architecture RTL of pong_top is
     signal w_blue         :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
     signal w_green        :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
     signal w_red          :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
+
+    signal w_score_P1       :    integer                 :=0;
+    signal w_score_P2       :    integer                 :=0;
+    signal r_7seg_P1        :    unsigned(6 downto 0)    :=(others=>'0');
+    signal r_7seg_P2        :    unsigned(6 downto 0)    :=(others=>'0');
+    signal r_7seg_sign      :    unsigned(6 downto 0)    :=(others=>'0');
 	 
     begin
         --dividing clock frequency
@@ -133,7 +142,30 @@ architecture RTL of pong_top is
             o_de=>w_de,
             o_blue=>w_blue,
             o_green=>w_green,
-            o_red=>w_red
+            o_red=>w_red,
+            o_score_P1 => w_score_P1,
+            o_score_P2 => w_score_P2
+        );
+
+        sevenSegment_display_P1: entity work.sevenSeg_display
+        port map (
+            i_clk => r_clk25,
+            i_score => w_score_P1,
+            o_7seg => r_7seg_P1
+        );
+
+        sevenSegment_display_P2: entity work.sevenSeg_display
+        port map (
+            i_clk => r_clk25,
+            i_score => w_score_P2,
+            o_7seg => r_7seg_P2
+        );
+
+        sevenSegment_display_sign: entity work.sevenSeg_display
+        port map (
+            i_clk => r_clk25,
+            i_score => 10,  --represent "-"
+            o_7seg => r_7seg_sign
         );
     
 
@@ -142,5 +174,8 @@ architecture RTL of pong_top is
         o_hdmi_VS<= w_VS;
         o_hdmi_DE<= w_DE;
         o_hdmi_DATA_BUS<= w_red & w_green & w_blue;
+        o_7seg_P1 <= not r_7seg_P1;
+        o_7seg_P2 <= not r_7seg_P2;
+        o_7seg_sign <= not r_7seg_sign;
 
     end RTL;

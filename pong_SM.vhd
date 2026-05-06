@@ -22,7 +22,9 @@ entity pong_SM is
         o_de            :   out     STD_LOGIC;
         o_blue          :   out     unsigned(g_VIDEO_WIDTH-1 downto 0);
         o_green         :   out     unsigned(g_VIDEO_WIDTH-1 downto 0);
-        o_red           :   out     unsigned(g_VIDEO_WIDTH-1 downto 0)
+        o_red           :   out     unsigned(g_VIDEO_WIDTH-1 downto 0);
+        o_score_P1      :   out     integer;
+        o_score_P2      :   out     integer
     );
 end pong_SM;
 
@@ -76,12 +78,12 @@ architecture RTL of pong_SM is
     signal r_y_paddle2_dwn_int       :   integer; 
 
     --state machine
-    type pong_game is (IDLE, GAME_START, COUNT, GAME_RUNNING, END_GAME);
+    type pong_game is (IDLE, GAME_START, COUNT, GAME_RUNNING, P1_WIN, P2_WIN, END_GAME);
     signal r_SM         :   pong_game       :=IDLE;
 
     --score signals
-    signal r_score_p1        : integer   :=0;
-    signal r_score_p2        : integer   :=0;
+    signal r_score_p1        : integer range 0 to 9   :=0;
+    signal r_score_p2        : integer range 0 to 9   :=0;
     signal r_start_counter   : integer range 0 to pc_START_LIMIT   :=0;
 
 
@@ -123,7 +125,7 @@ architecture RTL of pong_SM is
 
                                 if i_start= '0' and w_start = '1' then         --falling edge of start button, start the game
                                         r_SM <= COUNT;
-                                    end if;
+                                end if;
 									
                             when COUNT =>
                                 if r_start_counter < pc_START_LIMIT then      -- bull starts to move after some seconds
@@ -138,19 +140,37 @@ architecture RTL of pong_SM is
 								r_start <= '1';
                                 if r_x_ball_int = pc_X_PADDLE_PLAYER1 then
                                     if r_y_ball_int <= r_y_paddle1_dwn_int and r_y_ball_int >= r_y_paddle1_top_int then
-                                        r_score_p1 <= r_score_p1 + 1;
+                                        r_SM <= GAME_RUNNING;
                                     else
-                                        r_SM <= END_GAME;
+                                        r_SM <= P2_WIN;
                                     end if;
                                 
                                 elsif r_x_ball_int = pc_X_PADDLE_PLAYER2 then
                                     if r_y_ball_int <= r_y_paddle2_dwn_int and r_y_ball_int >= r_y_paddle2_top_int then
-                                        r_score_p2 <= r_score_p2 + 1;
+                                        r_SM <= GAME_RUNNING;
                                     else
-                                        r_SM <= END_GAME;
+                                        r_SM <= P1_WIN;
                                     end if;
                                 else
                                     r_SM <= GAME_RUNNING;
+                                end if;
+
+                            when P1_WIN =>
+                                if r_score_P1 = pc_SCORE_LIMIT then
+                                    r_score_P1 <= 0;
+												r_score_P2 <= 0;
+                                else
+                                    r_score_P1 <= r_score_P1 + 1;
+                                    r_SM <= END_GAME;
+                                end if;
+
+                            when P2_WIN =>
+                                if r_score_P2 = pc_SCORE_LIMIT then
+                                    r_score_P2 <= 0;
+												r_score_P1 <= 0;
+                                else
+                                    r_score_P2 <= r_score_P2 + 1;
+                                    r_SM <= END_GAME;
                                 end if;
 
                             when END_GAME =>
@@ -162,8 +182,6 @@ architecture RTL of pong_SM is
 
                                 if i_start= '0' and w_start = '1' then  --falling edge of start button, go from game over page to game page
                                     r_SM <= GAME_START;
-                                    r_score_P1 <= 0;
-                                    r_score_P2 <= 0;
                                 end if;
 
                             when others =>
@@ -326,5 +344,7 @@ architecture RTL of pong_SM is
 		o_red <= r_red;
 		o_blue <= r_blue;
 		o_green <= r_green;
+        o_score_P1 <= r_score_P1;
+        o_score_P2 <= r_score_P2;
 			
     end RTL;
