@@ -24,7 +24,8 @@ entity pong_SM is
         o_green         :   out     unsigned(g_VIDEO_WIDTH-1 downto 0);
         o_red           :   out     unsigned(g_VIDEO_WIDTH-1 downto 0);
         o_score_P1      :   out     integer;
-        o_score_P2      :   out     integer
+        o_score_P2      :   out     integer;
+        o_beep_en       :   out     STD_LOGIC
     );
 end pong_SM;
 
@@ -91,7 +92,10 @@ architecture RTL of pong_SM is
     signal w_reset        :   STD_LOGIC   :='0';
     signal w_start        :   STD_LOGIC   :='0';
 
-    
+    --beep
+    signal r_beep_en        :   STD_LOGIC   :='0';
+    signal r_beep_counter   :   integer range 0 to pc_BEEP_LENGTH   :=0;
+
 
     begin	 
         process(i_clk) is
@@ -138,9 +142,12 @@ architecture RTL of pong_SM is
 
                             when GAME_RUNNING =>
 								r_start <= '1';
+
                                 if r_x_ball_int = pc_X_PADDLE_PLAYER1 then
                                     if r_y_ball_int <= r_y_paddle1_dwn_int and r_y_ball_int >= r_y_paddle1_top_int then
                                         r_SM <= GAME_RUNNING;
+                                        r_beep_en <= '1';
+
                                     else
                                         r_SM <= P2_WIN;
                                     end if;
@@ -148,6 +155,8 @@ architecture RTL of pong_SM is
                                 elsif r_x_ball_int = pc_X_PADDLE_PLAYER2 then
                                     if r_y_ball_int <= r_y_paddle2_dwn_int and r_y_ball_int >= r_y_paddle2_top_int then
                                         r_SM <= GAME_RUNNING;
+                                        r_beep_en <= '1';
+
                                     else
                                         r_SM <= P1_WIN;
                                     end if;
@@ -191,6 +200,24 @@ architecture RTL of pong_SM is
                         end if;
                     end if;
             end process;
+        
+
+
+        --beep for 20 ms
+        process(i_clk) is --25MHz clock
+            begin
+                if rising_edge(i_clk) then
+                    if r_beep_en = '1' then
+                        if r_beep_counter < cp_BEEP_LENGTH then
+                            r_beep_counter <= r_beep_counter + 1;
+                        else
+                            r_beep_en <= '0';
+                            r_beep_counter <= 0;
+                        end if;
+                    end if;
+                end if;
+            end process;
+            o_beep_en <= r_beep_en;
 
 
 
@@ -280,6 +307,8 @@ architecture RTL of pong_SM is
             i_y => r_y,
             o_draw_gameOver_txt => r_draw_gameOver_txt
         );
+        
+
 
         --converting unsigned signals to integer
         r_x_ball_int <= to_integer(r_x_ball);

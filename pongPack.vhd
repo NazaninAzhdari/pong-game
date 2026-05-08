@@ -55,6 +55,7 @@ package pongPack is
 
     constant    pc_START_LIMIT      :   integer     :=12500000; --0.5 second
     constant    pc_SCORE_LIMIT      :   integer     :=9;
+    constant    pc_BEEP_LENGTH      :   integer     :=500000;   --20ms with 25MHz clock
   
 
 end package;

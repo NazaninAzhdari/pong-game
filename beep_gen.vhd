@@ -4,8 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity beep_gen is
     generic (
-        g_CLK_CYCLES   :  integer   :=26;          --determines the frequency of the tone
-        g_BEEP_LENGTH  :  integer   :=1000         --20 ms
+        g_CLK_CYCLES   :  integer   :=26;          --determines the frequency of the tone, approximately 1KHz
     );
     port (
         i_rlclk     :   in  STD_LOGIC;              --sample rate or LR clock, 48 KHz
@@ -24,20 +23,6 @@ architecture RTL of beep_gen is
                 if rising_edge(i_rlclk) then
                     --start beep
                     if i_en = '1' then
-                        r_active <= '1';
-                        r_bit_counter <= 0;
-                        r_length_counter <= 0;
-                    end if;
-
-                    if r_active = '1' then
-                        --beep duration
-                        if r_length_counter < g_BEEP_LENGTH then
-                            r_length_counter <= r_length_counter + 1;
-                        else
-                            r_active <= '0';
-                            r_length_counter <= 0;
-                        end if;
-
                         --generating samples
                         if r_counter < g_CLK_CYCLES -1 then
                             r_counter <= r_counter + 1;
@@ -47,7 +32,7 @@ architecture RTL of beep_gen is
                         end if;
                     else
                         r_counter <= 0;
-                         r_wave <= '0';
+                        r_wave <= '0';
                     end if;
                 end if;
             end process;

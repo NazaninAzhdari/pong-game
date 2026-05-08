@@ -21,9 +21,17 @@ entity pong_top is
         o_hdmi_VS       :   out     STD_LOGIC;
         o_hdmi_DE       :   out     STD_LOGIC;
         o_hdmi_DATA_BUS :   out     unsigned(23 downto 0);
+
+        --output to seven segment
         o_7seg_P1       :   out     unsigned(6 downto 0);
         o_7seg_P2       :   out     unsigned(6 downto 0);
-        o_7seg_sign     :   out     unsigned(6 downto 0)
+        o_7seg_sign     :   out     unsigned(6 downto 0);
+
+        --output to audio interface
+        o_XCLK          :   out     STD_LOGIC;
+        o_BCLK          :   out     STD_LOGIC;
+        o_LRCLK         :   out     STD_LOGIC;
+        o_DAC_DATA      :   out     STD_LOGIC
     );
 end pong_top;
 
@@ -46,6 +54,13 @@ architecture RTL of pong_top is
     signal r_7seg_P1        :    unsigned(6 downto 0)    :=(others=>'0');
     signal r_7seg_P2        :    unsigned(6 downto 0)    :=(others=>'0');
     signal r_7seg_sign      :    unsigned(6 downto 0)    :=(others=>'0');
+
+    signal w_beep_en        :       STD_LOGIC               :='0';
+    signal w_sample         :       unsigned(23 downto 0)   :=(others=>'0');
+    signal w_XCLK           :       STD_LOGIC               :='0';
+    signal w_BCLK           :       STD_LOGIC               :='0';
+    signal w_LRCLK          :       STD_LOGIC               :='0';
+    signal w_DATA           :       STD_LOGIC               :='0';
 	 
     begin
         --dividing clock frequency
@@ -144,9 +159,32 @@ architecture RTL of pong_top is
             o_green=>w_green,
             o_red=>w_red,
             o_score_P1 => w_score_P1,
-            o_score_P2 => w_score_P2
+            o_score_P2 => w_score_P2,
+            r_beep_en => w_beep_en
         );
 
+        --generating simple beep sound
+        beep_genarating: entity work.beep_gen
+        generic map (
+            g_CLK_CYCLES => 26
+        )
+        port map (
+            i_clk => w_LRCLK,
+            i_en => w_beep_en,
+            o_sample => w_sample
+        );
+
+        --i2s synchronizing
+        i2s_transmitter: entity work.i2s_tx
+        port map (
+            i_clk => i_clk, --50 MHz
+            i_sample => w_sample,
+            o_XCLK => w_XCLK
+            o_BCLK => w_BCLK,
+            o_LRCLK => w_LRCLK,
+            o_DATA => w_DATA
+        );
+        
         sevenSegment_display_P1: entity work.sevenSeg_display
         port map (
             i_clk => r_clk25,
@@ -174,8 +212,15 @@ architecture RTL of pong_top is
         o_hdmi_VS<= w_VS;
         o_hdmi_DE<= w_DE;
         o_hdmi_DATA_BUS<= w_red & w_green & w_blue;
+
         o_7seg_P1 <= not r_7seg_P1;
         o_7seg_P2 <= not r_7seg_P2;
         o_7seg_sign <= not r_7seg_sign;
+
+        o_XCLK <= w_XCLK;
+        o_BCLK <= w_BCLK;
+        o_LRCLK <= w_LRCLK;
+        o_DAC_DATA <= w_DATA;
+
 
     end RTL;
