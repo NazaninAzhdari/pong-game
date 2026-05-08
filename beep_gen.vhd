@@ -4,10 +4,11 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity beep_gen is
     generic (
-        g_CLK_CYCLES   :  integer   :=4            --determines the frequency of the tone
+        g_CLK_CYCLES   :  integer   :=26;          --determines the frequency of the tone
+        g_BEEP_LENGTH  :  integer   :=1000         --20 ms
     );
     port (
-        i_clk       :   in  STD_LOGIC;              --sample rate or LR clock, 48 KHz
+        i_rlclk     :   in  STD_LOGIC;              --sample rate or LR clock, 48 KHz
         i_en        :   in  STD_LOGIC;
         o_sample    :   out unsigned(23 downto 0)   --24 bit resolution
     );
@@ -18,10 +19,26 @@ architecture RTL of beep_gen is
     signal r_wave       :   STD_LOGIC       :='0';
     begin
 
-        process(i_clk) is
+        process(i_rlclk) is
             begin
-                if rising_edge(i_clk) then
+                if rising_edge(i_rlclk) then
+                    --start beep
                     if i_en = '1' then
+                        r_active <= '1';
+                        r_bit_counter <= 0;
+                        r_length_counter <= 0;
+                    end if;
+
+                    if r_active = '1' then
+                        --beep duration
+                        if r_length_counter < g_BEEP_LENGTH then
+                            r_length_counter <= r_length_counter + 1;
+                        else
+                            r_active <= '0';
+                            r_length_counter <= 0;
+                        end if;
+
+                        --generating samples
                         if r_counter < g_CLK_CYCLES -1 then
                             r_counter <= r_counter + 1;
                         else
@@ -30,7 +47,7 @@ architecture RTL of beep_gen is
                         end if;
                     else
                         r_counter <= 0;
-                        r_wave <= '0';
+                         r_wave <= '0';
                     end if;
                 end if;
             end process;
