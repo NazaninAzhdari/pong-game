@@ -4,7 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity beep_gen is
     generic (
-        g_CLK_CYCLES   :  integer   :=26;          --determines the frequency of the tone, approximately 1KHz
+        g_CLK_CYCLES   :  integer   :=26          --determines the frequency of the tone, approximately 1KHz
     );
     port (
         i_rlclk     :   in  STD_LOGIC;              --sample rate or LR clock, 48 KHz

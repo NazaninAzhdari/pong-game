@@ -163,6 +163,16 @@ architecture RTL of pong_SM is
                                 else
                                     r_SM <= GAME_RUNNING;
                                 end if;
+										  
+								--beep for 20ms when colliding		  
+                                if r_beep_en = '1' then
+                                    if r_beep_counter < pc_BEEP_LENGTH then
+                                            r_beep_counter <= r_beep_counter + 1;
+                                    else
+                                            r_beep_en <= '0';
+                                            r_beep_counter <= 0;
+                                    end if;
+                                end if;
 
                             when P1_WIN =>
                                 if r_score_P1 = pc_SCORE_LIMIT then
@@ -201,24 +211,6 @@ architecture RTL of pong_SM is
                     end if;
             end process;
         
-
-
-        --beep for 20 ms
-        process(i_clk) is --25MHz clock
-            begin
-                if rising_edge(i_clk) then
-                    if r_beep_en = '1' then
-                        if r_beep_counter < cp_BEEP_LENGTH then
-                            r_beep_counter <= r_beep_counter + 1;
-                        else
-                            r_beep_en <= '0';
-                            r_beep_counter <= 0;
-                        end if;
-                    end if;
-                end if;
-            end process;
-            o_beep_en <= r_beep_en;
-
 
 
         --synchronizing
@@ -375,5 +367,6 @@ architecture RTL of pong_SM is
 		o_green <= r_green;
         o_score_P1 <= r_score_P1;
         o_score_P2 <= r_score_P2;
+        o_beep_en <= r_beep_en;
 			
     end RTL;

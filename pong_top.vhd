@@ -160,7 +160,7 @@ architecture RTL of pong_top is
             o_red=>w_red,
             o_score_P1 => w_score_P1,
             o_score_P2 => w_score_P2,
-            r_beep_en => w_beep_en
+            o_beep_en => w_beep_en
         );
 
         --generating simple beep sound
@@ -169,7 +169,7 @@ architecture RTL of pong_top is
             g_CLK_CYCLES => 26
         )
         port map (
-            i_clk => w_LRCLK,
+            i_rlclk => w_LRCLK,
             i_en => w_beep_en,
             o_sample => w_sample
         );
@@ -179,7 +179,7 @@ architecture RTL of pong_top is
         port map (
             i_clk => i_clk, --50 MHz
             i_sample => w_sample,
-            o_XCLK => w_XCLK
+            o_XCLK => w_XCLK,
             o_BCLK => w_BCLK,
             o_LRCLK => w_LRCLK,
             o_DATA => w_DATA

@@ -19,7 +19,7 @@ architecture RTL of i2s_tx is
     signal      r_XCLK              :   STD_LOGIC   :='0';
 
     --Bit CLK
-    constant    CLC_CYCLES_BCLK     :   integer     :=9;
+    constant    CLK_CYCLES_BCLK     :   integer     :=9;
     signal      r_BCLK              :   STD_LOGIC   :='0';
 
     --LR clock
@@ -57,7 +57,7 @@ architecture RTL of i2s_tx is
                     if r_bit_counter < 31 then
                         r_bit_counter <= r_bit_counter + 1;
                     else
-                        r_shift <= i_sample & "00000000"  --24 bits of real data + 8 bits padding
+                        r_shift <= i_sample & "00000000";  --24 bits of real data + 8 bits padding
                         r_bit_counter <= 0;
                         r_LRCLK <= not r_LRCLK;           --generating the LRCLK, toggles every 32 bits transfered
                     end if;
