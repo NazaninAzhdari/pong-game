@@ -270,6 +270,8 @@ architecture RTL of pong_SM is
 			i_start => r_start,
             i_x => r_x,
             i_y => r_y,
+            i_x_not_div => w_x,
+            i_y_not_div => w_y,
             o_x_ball => r_x_ball,
             o_y_ball => r_y_ball,
             o_draw_ball => r_draw_ball
@@ -315,11 +317,11 @@ architecture RTL of pong_SM is
         r_blue <=   (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
                     (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
                     
-                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
+                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(yellow)
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
-						  (others=>'0') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+					(others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(blue)
 						  
-                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'   and r_de = '1' else  --border in game page(white)
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
                     (others=>'0') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver='0'  and r_de = '1' else  --draw background of start page(red)
@@ -328,11 +330,11 @@ architecture RTL of pong_SM is
         r_green <=  (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
                     (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
                     
-                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(yellow)
                     (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
-						  (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+					(others=>'0') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(blue)
 						  
-                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'   and r_de = '1' else  --border in game page(white)
                     "01100000"    when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
                     (others=>'0') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver='0'  and r_de = '1' else  --draw background of start page(red)
@@ -341,11 +343,11 @@ architecture RTL of pong_SM is
         r_red <=    (others=>'1') when r_draw_start_DV = '1'     and r_draw_total_start='1'     and r_de = '1' else  --draw start text in start page(white)
                     (others=>'0') when r_draw_start_DV = '1'     and r_draw_total_start='0'     and r_de = '1' else  --draw background of start page(green-blue)
                     
-                    (others=>'0') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(blue)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle1 ='1'       and r_de = '1' else  --paddle 1 in game page(yellow)
                     (others=>'1') when r_draw_game_DV = '1'      and r_draw_paddle2 ='1'       and r_de = '1' else  --paddle 2 in game page(red)
-						  (others=>'1') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(yellow)
+					(others=>'0') when r_draw_game_DV = '1'      and r_draw_ball ='1'          and r_de = '1' else  --draw ball in game page(blue)
 						  
-                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'  and r_de = '1' else  --border in game page(white)
+                    (others=>'1') when r_draw_game_DV = '1'      and r_draw_whole_border ='1'   and r_de = '1' else  --border in game page(white)
                     "00001010"    when r_draw_game_DV = '1'      and r_draw_total_game= '0'     and r_de = '1' else  --background in game page(green-red)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver ='1' and r_de = '1' else  --draw game over text in end page(white)
                     (others=>'1') when r_draw_gameOver_DV = '1'  and r_draw_total_gameOver='0'  and r_de = '1' else  --draw background of start page(red)

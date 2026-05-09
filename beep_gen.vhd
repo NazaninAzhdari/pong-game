@@ -24,7 +24,7 @@ architecture RTL of beep_gen is
                     --start beep
                     if i_en = '1' then
                         --generating samples
-                        if r_counter < g_CLK_CYCLES -1 then
+                        if r_counter < g_CLK_CYCLES - 1 then
                             r_counter <= r_counter + 1;
                         else
                             r_counter <= 0;

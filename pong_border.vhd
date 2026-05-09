@@ -28,7 +28,7 @@ architecture RTL of pong_border is
                                 or (r_y = pc_Y_BUTTOM_BORDER and r_x >= pc_X_LEFT_BORDER and r_x <= pc_X_RIGHT_BORDER)
                                 else '0';
 
-        o_draw_middle_border <= '1' when (r_x = pc_X_MIDDLE_BORDER and r_y >= pc_Y_TOP_BORDER and r_y <= pc_Y_BUTTOM_BORDER and i_y(1) = '1') 
+        o_draw_middle_border <= '1' when (r_x = pc_X_MIDDLE_BORDER and r_y >= pc_Y_TOP_BORDER and r_y <= pc_Y_BUTTOM_BORDER and  i_y(1 downto 0) /= "00")
                                 else '0';
 
     end RTL;
