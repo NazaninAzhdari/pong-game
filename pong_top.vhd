@@ -10,10 +10,10 @@ entity pong_top is
         g_VIDEO_WIDTH :   integer     :=8
     );
     port (
-        i_clk       :   in      STD_LOGIC;  --50
-        i_reset     :   in      STD_LOGIC;
-		i_start	    :	in		STD_LOGIC;
-        i_switch    :   in      unsigned(3 downto 0);
+        i_clk           :   in      STD_LOGIC;  --50 MHz
+        i_reset         :   in      STD_LOGIC;
+		i_start	        :	in		STD_LOGIC;
+        i_switch        :   in      unsigned(3 downto 0);
 
         --output to hdmi
         o_hdmi_clk      :   out     STD_LOGIC; --25MHz
@@ -36,25 +36,32 @@ entity pong_top is
 end pong_top;
 
 architecture RTL of pong_top is
+    --dividing frequency
     signal r_clk25    :    STD_LOGIC                :='0';
+
+    --debouncing switches and reset and start button
     signal r_switch   :    unsigned(3 downto 0)     :=(others=>'0');
     signal r_reset    :    STD_LOGIC                :='0';
 	signal r_start    :    STD_LOGIC                :='0';
 
-    signal w_hs       :    STD_LOGIC                 :='0';
-    signal w_vs       :    STD_LOGIC                 :='0'; 
-    signal w_de       :    STD_LOGIC                 :='0';
+    --HVsync signals
+    signal w_hs           :    STD_LOGIC                 :='0';
+    signal w_vs           :    STD_LOGIC                 :='0'; 
+    signal w_de           :    STD_LOGIC                 :='0';
 
+    --video bus signals
     signal w_blue         :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
     signal w_green        :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
     signal w_red          :  unsigned(g_VIDEO_WIDTH-1 downto 0)   :=(others=>'0');
 
+    --score signals and disply the score on 7seg
     signal w_score_P1       :    integer                 :=0;
     signal w_score_P2       :    integer                 :=0;
     signal r_7seg_P1        :    unsigned(6 downto 0)    :=(others=>'0');
     signal r_7seg_P2        :    unsigned(6 downto 0)    :=(others=>'0');
     signal r_7seg_sign      :    unsigned(6 downto 0)    :=(others=>'0');
 
+    --audio interface
     signal w_beep_en        :       STD_LOGIC               :='0';
     signal w_sample         :       unsigned(23 downto 0)   :=(others=>'0');
     signal w_XCLK           :       STD_LOGIC               :='0';
@@ -72,7 +79,6 @@ architecture RTL of pong_top is
             i_clk => i_clk,  --50
             o_clk => r_clk25 --25
         );
-
 
         --debouncing switches
         debouncing0: entity work.debounce_filter 
@@ -114,8 +120,6 @@ architecture RTL of pong_top is
             i_bouncy => i_switch(3),
             o_debounced => r_switch(3)
         );
-
-
 
         --debouncing reset button
         debouncing_reset: entity work.debounce_filter 
@@ -185,6 +189,7 @@ architecture RTL of pong_top is
             o_DATA => w_DATA
         );
         
+        --display the player 1's score on first 7seg 
         sevenSegment_display_P1: entity work.sevenSeg_display
         port map (
             i_clk => r_clk25,
@@ -192,6 +197,7 @@ architecture RTL of pong_top is
             o_7seg => r_7seg_P1
         );
 
+        --display the player 2's score on second 7seg 
         sevenSegment_display_P2: entity work.sevenSeg_display
         port map (
             i_clk => r_clk25,
@@ -199,6 +205,8 @@ architecture RTL of pong_top is
             o_7seg => r_7seg_P2
         );
 
+        --display a simple minus "-" between the score of players, on the middle 7seg
+        -- for example like this =>  0 - 0 
         sevenSegment_display_sign: entity work.sevenSeg_display
         port map (
             i_clk => r_clk25,
@@ -206,17 +214,19 @@ architecture RTL of pong_top is
             o_7seg => r_7seg_sign
         );
     
-
+        --connecting hdmi interface signals
         o_hdmi_clk<= r_clk25;
         o_hdmi_HS<= w_hs;
         o_hdmi_VS<= w_VS;
         o_hdmi_DE<= w_DE;
         o_hdmi_DATA_BUS<= w_red & w_green & w_blue;
 
+        --connecting 7 segment display signals
         o_7seg_P1 <= not r_7seg_P1;
         o_7seg_P2 <= not r_7seg_P2;
         o_7seg_sign <= not r_7seg_sign;
 
+        --connecting audio interface signals
         o_XCLK <= w_XCLK;
         o_BCLK <= w_BCLK;
         o_LRCLK <= w_LRCLK;

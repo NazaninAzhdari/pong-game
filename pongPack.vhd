@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 package pongPack is
 	--functions
-    function pf_log2ceil(value:    integer) return integer;
+     function pf_log2ceil(value:    integer) return integer;
 	 function pf_draw_letter_S(x: integer; y: integer) return STD_LOGIC;
 	 function pf_draw_letter_T(x: integer; y: integer) return STD_LOGIC;
 	 function pf_draw_letter_A(x: integer; y: integer) return STD_LOGIC;
@@ -53,8 +53,8 @@ package pongPack is
     constant    pc_X_BALL_START     :   integer     :=pc_X_MIDDLE_BORDER;  --center of the ball
     constant    pc_Y_BALL_START     :   integer     :=pc_GAME_HEIGHT/2 -1; --center of the ball
 
-
-    constant    pc_START_LIMIT      :   integer     :=12500000; --0.5 second
+    --game spicifications
+    constant    pc_START_LIMIT      :   integer     :=12500000; --0.5 second => bull start to move 0.5 second after pushing the start button
     constant    pc_SCORE_LIMIT      :   integer     :=9;
     constant    pc_BEEP_LENGTH      :   integer     :=500000;   --20ms with 25MHz clock
   
@@ -73,7 +73,6 @@ package body pongPack is
                 return v_bit_counter;
             end function;
 
-        
 
         --------------------------------------------------------------------
                                --Drawing Letters
@@ -250,7 +249,9 @@ package body pongPack is
                 end if;
         end function;
 
-
+        --------------------------------------------------------
+        --                  Drawing shapes
+        --------------------------------------------------------
         function pf_draw_ball(r_x: integer; r_y: integer; r_x_not_div: integer; r_y_not_div: integer) return STD_LOGIC is
             variable x  :  integer range 0 to 15;
             variable y  :  integer range 0 to 15;

@@ -23,8 +23,8 @@ architecture RTL of pong_ball is
     signal r_x          :   integer range 0 to pc_GAME_WIDTH-1      :=0;
     signal r_y          :   integer range 0 to pc_GAME_HEIGHT-1     :=0;
 
-    signal r_x_not_div  :   integer range 0 to pc_H_TOTAL-1      :=0;
-    signal r_y_not_div :   integer range 0 to pc_V_TOTAL-1      :=0;
+    signal r_x_not_div  :   integer range 0 to pc_H_TOTAL-1         :=0;
+    signal r_y_not_div  :   integer range 0 to pc_V_TOTAL-1         :=0;
 
     signal r_x_ball     :   integer range 0 to pc_GAME_WIDTH -1     :=pc_X_BALL_START; --center of the ball
     signal r_y_ball     :   integer range 0 to pc_GAME_HEIGHT -1    :=pc_Y_BALL_START; --center of the ball

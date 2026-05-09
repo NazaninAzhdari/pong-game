@@ -13,10 +13,10 @@ entity pong_SM is
         i_clk           :   in      STD_LOGIC; --25MHz
         i_reset         :   in      STD_LOGIC;
         i_start         :   in      STD_LOGIC;
-        i_btn_up_P1_L     :   in      STD_LOGIC;
-        i_btn_dwn_P1_L    :   in      STD_LOGIC;
-        i_btn_up_P2_L     :   in      STD_LOGIC;
-        i_btn_dwn_P2_L    :   in      STD_LOGIC;
+        i_btn_up_P1_L   :   in      STD_LOGIC;
+        i_btn_dwn_P1_L  :   in      STD_LOGIC;
+        i_btn_up_P2_L   :   in      STD_LOGIC;
+        i_btn_dwn_P2_L  :   in      STD_LOGIC;
         o_hs            :   out     STD_LOGIC;
         o_vs            :   out     STD_LOGIC;
         o_de            :   out     STD_LOGIC;
@@ -87,10 +87,10 @@ architecture RTL of pong_SM is
     signal r_score_p2        : integer range 0 to 9   :=0;
     signal r_start_counter   : integer range 0 to pc_START_LIMIT   :=0;
 
-
-    signal r_start        :   STD_LOGIC   :='0';
-    signal w_reset        :   STD_LOGIC   :='0';
-    signal w_start        :   STD_LOGIC   :='0';
+    --register the start and reset button to find the falling edge
+    signal r_start          :   STD_LOGIC   :='0';
+    signal w_reset          :   STD_LOGIC   :='0';
+    signal w_start          :   STD_LOGIC   :='0';
 
     --beep
     signal r_beep_en        :   STD_LOGIC   :='0';
@@ -111,7 +111,6 @@ architecture RTL of pong_SM is
                         r_SM       <= IDLE;
                     else
                         
-
                         case r_SM is
                             when IDLE =>
                                 r_draw_start_DV <= '1';
