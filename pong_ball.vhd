@@ -11,6 +11,8 @@ entity pong_ball is
         i_start     :       in      STD_LOGIC;
         i_x         :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_y         :       in      unsigned(pc_GAME_BITS-1 downto 0);
+        i_x_not_div :       in      unsigned(pc_VGA_BITS-1 downto 0);
+        i_y_not_div :       in      unsigned(pc_VGA_BITS-1 downto 0);
         o_x_ball    :       out     unsigned(pc_GAME_BITS-1 downto 0);   --center of the ball
         o_y_ball    :       out     unsigned(pc_GAME_BITS-1 downto 0);   --center of the ball
         o_draw_ball :       out     STD_LOGIC
@@ -20,6 +22,9 @@ end pong_ball;
 architecture RTL of pong_ball is
     signal r_x          :   integer range 0 to pc_GAME_WIDTH-1      :=0;
     signal r_y          :   integer range 0 to pc_GAME_HEIGHT-1     :=0;
+
+    signal r_x_not_div  :   integer range 0 to pc_H_TOTAL-1      :=0;
+    signal r_y_not_div :   integer range 0 to pc_V_TOTAL-1      :=0;
 
     signal r_x_ball     :   integer range 0 to pc_GAME_WIDTH -1     :=pc_X_BALL_START; --center of the ball
     signal r_y_ball     :   integer range 0 to pc_GAME_HEIGHT -1    :=pc_Y_BALL_START; --center of the ball
@@ -32,6 +37,9 @@ architecture RTL of pong_ball is
     begin
         r_x <= to_integer(i_x);
         r_y <= to_integer(i_y);
+
+        r_x_not_div <= to_integer(i_x_not_div);
+        r_y_not_div <= to_integer(i_y_not_div);
 
         process(i_clk) is
             begin
@@ -95,7 +103,7 @@ architecture RTL of pong_ball is
                 begin
                     if rising_edge(i_clk) then
                         if (r_x = r_x_ball ) and (r_y = r_y_ball ) then
-                            o_draw_ball <= '1';
+                            o_draw_ball <= pf_draw_ball(r_x, r_y, r_x_not_div, r_y_not_div);
                         else
                             o_draw_ball <= '0';
                         end if;

@@ -13,6 +13,7 @@ package pongPack is
 	 function pf_draw_letter_E(x: integer; y: integer) return STD_LOGIC;
 	 function pf_draw_letter_O(x: integer; y: integer) return STD_LOGIC;
 	 function pf_draw_letter_V(x: integer; y: integer) return STD_LOGIC;
+	 function pf_draw_ball(r_x: integer; r_y: integer; r_x_not_div: integer; r_y_not_div: integer) return STD_LOGIC;
 	 
     --parameters of VGA 640*480 @ 60Hz timing
     --horizontal parameters
@@ -48,7 +49,7 @@ package pongPack is
     constant    pc_X_PADDLE_PLAYER2:   integer     :=pc_X_RIGHT_BORDER-2;     --left top corner of the paddle
 
     --parameter of ball
-    constant    pc_BALL_SPEED       :   integer     :=1250000;
+    constant    pc_BALL_SPEED       :   integer     :=2000000;
     constant    pc_X_BALL_START     :   integer     :=pc_X_MIDDLE_BORDER;  --center of the ball
     constant    pc_Y_BALL_START     :   integer     :=pc_GAME_HEIGHT/2 -1; --center of the ball
 
@@ -245,6 +246,38 @@ package body pongPack is
                 or ((y=6) and (x=2)) then
                     return '1';
                 else 
+                    return '0';
+                end if;
+        end function;
+
+
+        function pf_draw_ball(r_x: integer; r_y: integer; r_x_not_div: integer; r_y_not_div: integer) return STD_LOGIC is
+            variable x  :  integer range 0 to 15;
+            variable y  :  integer range 0 to 15;
+
+			variable rx2  :  integer;
+            variable ry2  :  integer;
+			variable r2  :  integer;
+				
+            begin
+                x := r_x_not_div - (r_x * 16);
+                y := r_y_not_div - (r_y * 16);
+
+				-- radius of ball = R = 8
+                --center of ball = (x0, y0) = (7.5, 7.5)
+                -- (X - x0)^2 + (y - y0)^2 = R^2
+                -- (X - 7.5)^2 + (y - 7.5)^2 = 8^2
+                --i dont want floating pont => multiply with 4
+                -- 4 * ((X - 7.5)^2 + (y - 7.5)^2) = 4 * (8^2)
+                -- (2x - 15)^2 + (2y - 15)^2 = 256
+
+                rx2 := ((2 * x ) - 15)**2;
+                ry2 := ((2 * y) - 15)**2;
+                r2 := rx2 + ry2;
+                
+                if r2 < 256 then
+                    return '1';
+                else
                     return '0';
                 end if;
         end function;
