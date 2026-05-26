@@ -2,78 +2,98 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
+--LRCLK = sample rate = 48 kHz
+--BCLK  = LRCLK × 64 = 3.072 MHz
+--MCLK  = LRCLK × 256 = 12.288 MHz
+
+
 entity i2s_tx is
+    generic (
+        g_SAMPLE_WIDTH      :   integer         :=24;
+        g_HALF_PERIOD_MCLK  :   integer         :=2;  --12.5MHz 
+        g_HALF_PERIOD_BCLK  :   integer         :=8  --3.1MHz
+    );
     port (
-        i_clk         :       in      STD_LOGIC;            --FPGA Clock = 50 MHz 
-        i_sample      :       in      unsigned(23 downto 0);
-        o_XCLK        :       out     STD_LOGIC;            --Required Master Clock for running the DAC= 12.5 MHz
-        o_LRCLK       :       out     STD_LOGIC;            --The LRCLK = Sample rate = 48 KHz => The LRCLK is high for right Channel and its low for left channel
-        o_BCLK        :       out     STD_LOGIC;            --Bit CLK = Sample Rate * number of bits per channel * channels = 3.1 MHz = 48KHz * 32 * 2
-        o_DATA        :       out     STD_LOGIC
+        i_clk               :   in      STD_LOGIC; --System Clock = 50MHZ
+        i_reset             :   in      STD_LOGIC;
+        i_sample            :   in      unsigned(g_SAMPLE_WIDTH -1 downto 0);
+        o_BCLK              :   out     STD_LOGIC; 
+        o_LRCLK             :   out     STD_LOGIC;
+        o_MCLK              :   out     STD_LOGIC;
+        o_DATA              :   out     STD_LOGIC
     );
 end i2s_tx;
 
 architecture RTL of i2s_tx is
-    --XCLK 
-    constant    c_HALF_PERIOD_XCLK  :   integer     :=2;    --Number of Clock cycles required for half period of the Master Clock(12.5MHz).
-                                                            --System Clock / (Master CLK * 2)
-    signal      r_XCLK              :   STD_LOGIC   :='0';
+    signal r_MCLK_counter   :   integer range 0 to g_HALF_PERIOD_MCLK-1 :=0;
+    signal r_BCLK_counter   :   integer range 0 to g_HALF_PERIOD_BCLK-1 :=0;
+    signal r_bit_counter    :   integer range 0 to 31 :=0;
 
-    --Bit CLK
-    constant    c_HALF_PERIOD_BCLK  :   integer     :=8;    --System Clock / (Master CLK * 2)
-    signal      r_BCLK              :   STD_LOGIC   :='0';
+    signal r_MCLK   :   STD_LOGIC  :='0';
+    signal r_BCLK  :   STD_LOGIC   :='0';
+    signal r_LRCLK  :   STD_LOGIC   :='1';
+	 
+	 signal w_BCLK  :   STD_LOGIC   :='0';
 
-    --LR clock
-    signal      r_LRCLK             :   STD_LOGIC   :='1';
-    signal      r_shift             :   unsigned(31 downto 0)   :=(others=>'0');
-    signal      r_bit_counter       :   integer range 0 to 31   :=31;
-
+    signal r_sample     :   unsigned(31 downto 0) :=(others=>'0');
     begin
-
-        ------------------------------------
-        --Generating 12.5 MHz Master Clock
-        ------------------------------------
-        generating_master_clock_12MHz : entity work.freq_divider
-        generic map(
-            g_HALF_PERIOD_OUT_FREQ => c_HALF_PERIOD_XCLK
-        )
-        port map (
-            i_clk => i_clk,  --50 MHz 
-            o_clk => r_XCLK  --12.5 MHz
-        );
-
-        -------------------------------------------------------------------------------------------
-        --Generating 3.1 MHz Bit Clock
-        --Bit Clock = sample rate(48KHz) * number of bits per channel(32) * number of channels(2)
-        -------------------------------------------------------------------------------------------
-        generating_bit_clock_3MHz : entity work.freq_divider
-        generic map(
-            g_HALF_PERIOD_OUT_FREQ=> c_HALF_PERIOD_BCLK
-        )
-        port map (
-            i_clk => i_clk,  --50 MHz
-            o_clk => r_BCLK  --3.1 MHz
-        );
-
-        process(r_BCLK) is
+        process(i_clk, i_reset) is
             begin
-                if rising_edge(r_BCLK) then
-                    o_DATA <= r_shift(31);                  --send the MSB
-                    r_shift <= r_shift(30 downto 0) & '0';  --shift by one
+                if i_reset = '1' then
+                    r_MCLK_counter <= 0;
+                    r_BCLK_counter <= 0;
+                    r_bit_counter <= 0;
+                    r_MCLK <= '0';
+                    r_BCLK <= '0';
+                    r_LRCLK <= '1';
+						  
+						  w_BCLK <= '0';
 
-                    if r_bit_counter < 31 then
-                        r_bit_counter <= r_bit_counter + 1;
+                elsif rising_edge(i_clk) then
+                    --------------------------------------------
+                    --Generating Master Clock
+                    --------------------------------------------
+                    if r_MCLK_counter < g_HALF_PERIOD_MCLK-1 then
+                        r_MCLK_counter <= r_MCLK_counter + 1;
                     else
-                        r_shift <= i_sample & "00000000";  --24 bits of real data + 8 bits padding
-                        r_bit_counter <= 0;
-                        r_LRCLK <= not r_LRCLK;           --generating the LRCLK, toggles every 32 bits transfered
+                        r_MCLK_counter <= 0;
+                        r_MCLK <= not r_MCLK;
                     end if;
+
+                    ----------------------------------------------
+                    --Generating BCLK
+                    ----------------------------------------------
+                    if r_BCLK_counter < g_HALF_PERIOD_BCLK-1 then
+                        r_BCLK_counter <= r_BCLK_counter + 1;
+                    else
+                        r_BCLK_counter <= 0;
+                        r_BCLK <= not r_BCLK;
+                    end if;
+
+                    ----------------------------------------------
+                    --Transmitting bits in each rising-edge of BCLK
+                    -----------------------------------------------
+                        if r_BCLK = '1' and w_BCLK = '0' then
+                            r_sample<= r_sample(30 downto 0) & '0';  --shift by one;
+
+                            if r_bit_counter < 31 then
+                                r_bit_counter <= r_bit_counter + 1;
+
+                            else
+                                r_bit_counter <= 0;
+                                r_LRCLK <= not r_LRCLK;
+                                r_sample <= i_sample & "00000000";
+                            end if;
+                        end if;
+
+						w_BCLK <= r_BCLK;
                 end if;
-
             end process;
+            
+            o_DATA <= r_sample(31); 
+            o_BCLK <= r_BCLK;
+            o_MCLK <= r_MCLK;
+            o_LRCLK <= r_LRCLK;
 
-        o_XCLK <= r_XCLK;
-        o_BCLK <= r_BCLK;
-        o_LRCLK <= r_LRCLK;
-        
+
     end RTL;
