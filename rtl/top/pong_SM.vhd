@@ -178,7 +178,7 @@ architecture RTL of pong_SM is
                             when P1_WIN =>
                                 if r_score_P1 = pc_SCORE_LIMIT then
                                     r_score_P1 <= 0;
-												r_score_P2 <= 0;
+									r_score_P2 <= 0;
                                 else
                                     r_score_P1 <= r_score_P1 + 1;
                                     r_SM <= END_GAME;
@@ -187,7 +187,7 @@ architecture RTL of pong_SM is
                             when P2_WIN =>
                                 if r_score_P2 = pc_SCORE_LIMIT then
                                     r_score_P2 <= 0;
-												r_score_P1 <= 0;
+									r_score_P1 <= 0;
                                 else
                                     r_score_P2 <= r_score_P2 + 1;
                                     r_SM <= END_GAME;
