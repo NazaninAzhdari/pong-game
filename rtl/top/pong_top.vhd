@@ -138,7 +138,7 @@ architecture RTL of pong_top is
         audio: entity work.audio_top
         port map(
             i_clk => i_clk,
-				i_clk25 => r_clk25,
+			i_clk25 => r_clk25,
             i_reset => r_reset,
             i_beep_En => w_beep_en,
             i_start_en => w_start_en,
