@@ -25,7 +25,9 @@ entity pong_SM is
         o_red           :   out     unsigned(g_VIDEO_WIDTH-1 downto 0);
         o_score_P1      :   out     integer;
         o_score_P2      :   out     integer;
-        o_beep_en       :   out     STD_LOGIC
+        o_beep_en       :   out     STD_LOGIC;
+        o_start_en      :   out     STD_LOGIC;
+        o_gameOver_en   :   out     STD_LOGIC
     );
 end pong_SM;
 
@@ -127,7 +129,7 @@ architecture RTL of pong_SM is
                                 r_draw_gameOver_DV <= '0';
 
                                 if i_start= '0' and w_start = '1' then         --falling edge of start button, start the game
-                                        r_SM <= COUNT;
+                                    r_SM <= COUNT;
                                 end if;
 									
                             when COUNT =>
@@ -369,5 +371,7 @@ architecture RTL of pong_SM is
         o_score_P1 <= r_score_P1;
         o_score_P2 <= r_score_P2;
         o_beep_en <= r_beep_en;
+        o_start_en <= r_draw_start_DV;
+        o_gameOver_en <= r_draw_gameOver_DV;
 			
     end RTL;

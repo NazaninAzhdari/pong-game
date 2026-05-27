@@ -19,7 +19,7 @@ end HVsync;
 
 architecture RTL of HVsync is
     signal  r_x     :   integer range 0 to pc_H_TOTAL-1    :=0;
-    signal  r_y     :   integer range 0 to pc_V_ACTIVE-1   :=0;
+    signal  r_y     :   integer range 0 to pc_V_TOTAL-1   :=0;
 
     begin
         process(i_clk, i_reset) is

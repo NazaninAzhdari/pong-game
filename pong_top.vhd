@@ -63,17 +63,15 @@ architecture RTL of pong_top is
 
     --audio interface
     signal w_beep_en        :       STD_LOGIC               :='0';
-    signal w_sample         :       unsigned(23 downto 0)   :=(others=>'0');
-    signal w_XCLK           :       STD_LOGIC               :='0';
-    signal w_BCLK           :       STD_LOGIC               :='0';
-    signal w_LRCLK          :       STD_LOGIC               :='0';
-    signal w_DATA           :       STD_LOGIC               :='0';
+    signal w_start_en        :       STD_LOGIC               :='0';  
+    signal w_gameOver_en        :       STD_LOGIC               :='0';
+
 	 
     begin
         --dividing clock frequency
         clk25: entity work.freq_divider
         generic map (
-            g_CLK_CYCLES => 1
+            g_HALF_PERIOD_OUT_FRQ => 1
         )
         port map (
             i_clk => i_clk,  --50
@@ -164,30 +162,27 @@ architecture RTL of pong_top is
             o_red=>w_red,
             o_score_P1 => w_score_P1,
             o_score_P2 => w_score_P2,
-            o_beep_en => w_beep_en
+            o_beep_en => w_beep_en,
+            o_start_en => w_start_en,
+            o_gameOver_en => w_gameOver_en
         );
 
-        --generating simple beep sound
-        beep_genarating: entity work.beep_gen
-        generic map (
-            g_CLK_CYCLES => 26
-        )
-        port map (
-            i_rlclk => w_LRCLK,
-            i_en => w_beep_en,
-            o_sample => w_sample
+
+        --audio interface
+        audio: entity work.audio_top
+        port map(
+            i_clk => i_clk,
+				i_clk25 => r_clk25,
+            i_reset => r_reset,
+            i_beep_En => w_beep_en,
+            i_start_en => w_start_en,
+            i_gameOver_en => w_gameOver_en,
+            o_MCLK => o_XCLK,
+            o_LRCLK => o_LRCLK,
+            o_BCLK => o_BCLK,
+            o_DATA => o_DAC_DATA
         );
 
-        --i2s synchronizing
-        i2s_transmitter: entity work.i2s_tx
-        port map (
-            i_clk => i_clk, --50 MHz
-            i_sample => w_sample,
-            o_XCLK => w_XCLK,
-            o_BCLK => w_BCLK,
-            o_LRCLK => w_LRCLK,
-            o_DATA => w_DATA
-        );
         
         --display the player 1's score on first 7seg 
         sevenSegment_display_P1: entity work.sevenSeg_display
@@ -226,11 +221,7 @@ architecture RTL of pong_top is
         o_7seg_P2 <= not r_7seg_P2;
         o_7seg_sign <= not r_7seg_sign;
 
-        --connecting audio interface signals
-        o_XCLK <= w_XCLK;
-        o_BCLK <= w_BCLK;
-        o_LRCLK <= w_LRCLK;
-        o_DAC_DATA <= w_DATA;
+        
 
 
     end RTL;

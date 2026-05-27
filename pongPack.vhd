@@ -28,7 +28,7 @@ package pongPack is
     constant    pc_V_SYNC      :   integer     :=2;
     constant    pc_V_BP        :   integer     :=33;
     constant    pc_V_TOTAL     :   integer     :=pc_V_ACTIVE + pc_V_FP + pc_V_SYNC + pc_V_BP; 
-    constant    pc_VGA_BITS    :   integer     :=pf_log2ceil(pc_H_TOTAL);  --9 bits
+    constant    pc_VGA_BITS    :   integer     :=pf_log2ceil(pc_H_TOTAL);  --10 bits
     
     --parameters of pong game
     constant    pc_GAME_WIDTH      :   integer     :=40; --640/16=40

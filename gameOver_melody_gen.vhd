@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity start_melody_gen is
+entity gameOver_melody_gen is
     generic (
         g_SAMPLE_WIDTH      :   integer     :=24
     );
@@ -12,25 +12,24 @@ entity start_melody_gen is
         i_LRCLK     :   in      STD_LOGIC;
         o_sample    :   out     unsigned(g_sample_width-1 downto 0)
     );
-end start_melody_gen;
+end gameOver_melody_gen;
 
-architecture RTL of start_melody_gen is
+architecture RTL of gameOver_melody_gen is
     signal r_LRCLK        : std_logic := '0';
     signal r_freq_counter : integer  := 0;
     signal r_level        : std_logic := '0';
     signal r_sample       : signed(g_SAMPLE_WIDTH-1 downto 0) := (others => '0');
 
     signal tone_indx : integer range 0 to 5  :=0;
-    type tone is array ( 0 to 5) of integer;
+    type tone is array ( 0 to 4) of integer;
     constant half_period_tone : tone :=(
-        0 => 40,
-        1 => 30,
-        2 => 24,
-        3 => 20,
-        4 => 16,
-		  5 => 16
+        0 => 24,
+        1 => 34,
+        2 => 48,
+        3 => 96,
+		  4 => 96
     );
-    constant c_DURATION_LIMIT  :  integer   :=24000;
+    constant c_DURATION_LIMIT  :  integer   :=12000;
     signal r_duration_counter : integer range 0 to c_DURATION_LIMIT := 0;
 
     constant AMP_POS : signed(g_SAMPLE_WIDTH-1 downto 0) := to_signed( 4000000, g_SAMPLE_WIDTH);
@@ -58,7 +57,7 @@ architecture RTL of start_melody_gen is
                             else
                                 r_duration_counter <= 0;
                                 
-                                if tone_indx = 5 then
+                                if tone_indx = 4 then
                                     tone_indx <= 0;
                                 else
                                     tone_indx <= tone_indx + 1;

@@ -47,7 +47,7 @@ architecture RTL of i2s_tx is
                     r_BCLK <= '0';
                     r_LRCLK <= '1';
 						  
-						  w_BCLK <= '0';
+					w_BCLK <= '0';
 
                 elsif rising_edge(i_clk) then
                     --------------------------------------------
