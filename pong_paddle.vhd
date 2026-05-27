@@ -12,13 +12,13 @@ entity pong_paddle is
     );
     port (
         i_clk             :       in      STD_LOGIC; --25MHz clock
-		i_start			  :		in 		STD_LOGIC;
+		i_start			  :		  in      STD_LOGIC;
         i_x               :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_y               :       in      unsigned(pc_GAME_BITS-1 downto 0);
         i_btn_up_L        :       in      STD_LOGIC;
         i_btn_dwn_L       :       in      STD_LOGIC;
-        o_y_paddle_top  :       out     unsigned(pc_GAME_BITS-1 downto 0);
-        o_y_paddle_dwn :       out     unsigned(pc_GAME_BITS-1 downto 0);
+        o_y_paddle_top    :       out     unsigned(pc_GAME_BITS-1 downto 0);
+        o_y_paddle_dwn    :       out     unsigned(pc_GAME_BITS-1 downto 0);
         o_draw_paddle     :       out     STD_LOGIC
     );
 end pong_paddle;
@@ -82,14 +82,11 @@ architecture RTL of pong_paddle is
 				process(i_clk) is
 					begin
 						if rising_edge(i_clk) then
-							
-								if r_x = g_X_LOCATION_PADDLE	and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
-									o_draw_paddle <= '1';
-								else
-									o_draw_paddle <= '0';
-								end if;
-							
-							
+                            if r_x = g_X_LOCATION_PADDLE	and (r_y <= r_y_paddle_dwn ) and (r_y >= r_y_paddle_top) then
+                                o_draw_paddle <= '1';
+                            else
+                                o_draw_paddle <= '0';
+                            end if;
 						end if;
 					end process;
 					

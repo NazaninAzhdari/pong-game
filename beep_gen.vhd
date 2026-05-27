@@ -16,13 +16,13 @@ entity beep_gen is
 end beep_gen;
 
 architecture RTL of beep_gen is
-    signal r_LRCLK        : std_logic := '0';
+    signal r_LRCLK        : std_logic                               := '0';
     signal r_beep_counter : integer range 0 to g_HALF_PERIOD_BEEP-1 := 0;
-    signal r_level        : std_logic := '0';
-    signal r_sample       : signed(g_SAMPLE_WIDTH-1 downto 0) := (others => '0');
+    signal r_level        : std_logic                               := '0';
+    signal r_sample       : signed(g_SAMPLE_WIDTH-1 downto 0)       := (others => '0');
 
-    constant AMP_POS : signed(g_SAMPLE_WIDTH-1 downto 0) := to_signed( 4000000, g_SAMPLE_WIDTH);
-    constant AMP_NEG : signed(g_SAMPLE_WIDTH-1 downto 0) := to_signed(-4000000, g_SAMPLE_WIDTH);
+    constant AMP_POS : signed(g_SAMPLE_WIDTH-1 downto 0)            := to_signed( 4000000, g_SAMPLE_WIDTH);
+    constant AMP_NEG : signed(g_SAMPLE_WIDTH-1 downto 0)            := to_signed(-4000000, g_SAMPLE_WIDTH);
 
 begin
     process(i_clk)
@@ -30,7 +30,7 @@ begin
         if rising_edge(i_clk) then
             r_LRCLK <= i_LRCLK;
 
-            -- detect LRCLK rising edge
+            -- Detect LRCLK rising edge
             if i_LRCLK = '1' and r_LRCLK = '0' then
 
                 if i_en = '1' then

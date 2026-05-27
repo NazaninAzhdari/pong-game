@@ -22,10 +22,10 @@ entity pong_top is
         o_hdmi_DE       :   out     STD_LOGIC;
         o_hdmi_DATA_BUS :   out     unsigned(23 downto 0);
 
-        --output to seven segment
+        --output to seven segment display
         o_7seg_P1       :   out     unsigned(6 downto 0);
         o_7seg_P2       :   out     unsigned(6 downto 0);
-        o_7seg_sign     :   out     unsigned(6 downto 0);
+        o_7seg_G        :   out     STD_LOGIC;
 
         --output to audio interface
         o_XCLK          :   out     STD_LOGIC;
@@ -39,8 +39,7 @@ architecture RTL of pong_top is
     --dividing frequency
     signal r_clk25    :    STD_LOGIC                :='0';
 
-    --debouncing switches and reset and start button
-    signal r_switch   :    unsigned(3 downto 0)     :=(others=>'0');
+    --debouncing reset and start button
     signal r_reset    :    STD_LOGIC                :='0';
 	signal r_start    :    STD_LOGIC                :='0';
 
@@ -59,16 +58,17 @@ architecture RTL of pong_top is
     signal w_score_P2       :    integer                 :=0;
     signal r_7seg_P1        :    unsigned(6 downto 0)    :=(others=>'0');
     signal r_7seg_P2        :    unsigned(6 downto 0)    :=(others=>'0');
-    signal r_7seg_sign      :    unsigned(6 downto 0)    :=(others=>'0');
 
     --audio interface
     signal w_beep_en        :       STD_LOGIC               :='0';
-    signal w_start_en        :       STD_LOGIC               :='0';  
-    signal w_gameOver_en        :       STD_LOGIC               :='0';
+    signal w_start_en       :       STD_LOGIC               :='0';  
+    signal w_gameOver_en    :       STD_LOGIC               :='0';
 
-	 
+ 
     begin
+        -----------------------------
         --dividing clock frequency
+        -----------------------------
         clk25: entity work.freq_divider
         generic map (
             g_HALF_PERIOD_OUT_FRQ => 1
@@ -78,48 +78,9 @@ architecture RTL of pong_top is
             o_clk => r_clk25 --25
         );
 
-        --debouncing switches
-        debouncing0: entity work.debounce_filter 
-        generic map (
-            g_CLK_CYCLES => 1
-        )
-        port map (
-            i_clk => i_clk, --50
-            i_bouncy => i_switch(0),
-            o_debounced => r_switch(0)
-        );
-
-        debouncing1: entity work.debounce_filter 
-        generic map (
-            g_CLK_CYCLES => 1
-        )
-        port map (
-            i_clk => i_clk, --50
-            i_bouncy => i_switch(1),
-            o_debounced => r_switch(1)
-        );
-
-        debouncing2: entity work.debounce_filter 
-        generic map (
-            g_CLK_CYCLES => 1
-        )
-        port map (
-            i_clk => i_clk, --50
-            i_bouncy => i_switch(2),
-            o_debounced => r_switch(2)
-        );
-
-        debouncing3: entity work.debounce_filter 
-        generic map (
-            g_CLK_CYCLES => 1
-        )
-        port map (
-            i_clk => i_clk, --50
-            i_bouncy => i_switch(3),
-            o_debounced => r_switch(3)
-        );
-
+        --------------------------
         --debouncing reset button
+        --------------------------
         debouncing_reset: entity work.debounce_filter 
         generic map (
             g_CLK_CYCLES => 500000
@@ -130,7 +91,9 @@ architecture RTL of pong_top is
             o_debounced => r_reset
         );
 
+        ----------------------------
 		  --debouncing start button
+        ----------------------------
         debouncing_start: entity work.debounce_filter 
         generic map (
             g_CLK_CYCLES => 500000
@@ -141,7 +104,9 @@ architecture RTL of pong_top is
             o_debounced => r_start
         );
 
-        --pong game
+        --------------------------
+        --pong game state machine
+        --------------------------
         pong_game : entity work.pong_SM
         generic map(
             g_VIDEO_WIDTH=> g_VIDEO_WIDTH
@@ -150,10 +115,10 @@ architecture RTL of pong_top is
             i_clk=> r_clk25,
             i_reset=>r_reset,
             i_start=>r_start,
-            i_btn_up_P1_L=>r_switch(0),
-            i_btn_dwn_P1_L=>r_switch(1),
-            i_btn_up_P2_L=>r_switch(2),
-            i_btn_dwn_P2_L=>r_switch(3),
+            i_btn_up_P1_L=>i_switch(0),
+            i_btn_dwn_P1_L=>i_switch(1),
+            i_btn_up_P2_L=>i_switch(2),
+            i_btn_dwn_P2_L=>i_switch(3),
             o_hs=>w_hs,
             o_vs=>w_vs,
             o_de=>w_de,
@@ -167,8 +132,9 @@ architecture RTL of pong_top is
             o_gameOver_en => w_gameOver_en
         );
 
-
+        ------------------
         --audio interface
+        ------------------
         audio: entity work.audio_top
         port map(
             i_clk => i_clk,
@@ -183,8 +149,9 @@ architecture RTL of pong_top is
             o_DATA => o_DAC_DATA
         );
 
-        
+        ---------------------------------------------
         --display the player 1's score on first 7seg 
+        ---------------------------------------------
         sevenSegment_display_P1: entity work.sevenSeg_display
         port map (
             i_clk => r_clk25,
@@ -192,36 +159,33 @@ architecture RTL of pong_top is
             o_7seg => r_7seg_P1
         );
 
+        o_7seg_P1 <= not r_7seg_P1;
+
+        ----------------------------------------------
         --display the player 2's score on second 7seg 
+        ----------------------------------------------
         sevenSegment_display_P2: entity work.sevenSeg_display
         port map (
             i_clk => r_clk25,
             i_score => w_score_P2,
             o_7seg => r_7seg_P2
         );
+        
+        o_7seg_P2 <= not r_7seg_P2;
 
+        -----------------------------------------------------------------------------
         --display a simple minus "-" between the score of players, on the middle 7seg
-        -- for example like this =>  0 - 0 
-        sevenSegment_display_sign: entity work.sevenSeg_display
-        port map (
-            i_clk => r_clk25,
-            i_score => 10,  --represent "-"
-            o_7seg => r_7seg_sign
-        );
+        --for example like this =>  0 - 0 
+        -----------------------------------------------------------------------------
+        o_7seg_G <= '0'; --Active low
     
+        ------------------------------------
         --connecting hdmi interface signals
+        ------------------------------------
         o_hdmi_clk<= r_clk25;
         o_hdmi_HS<= w_hs;
         o_hdmi_VS<= w_VS;
         o_hdmi_DE<= w_DE;
         o_hdmi_DATA_BUS<= w_red & w_green & w_blue;
-
-        --connecting 7 segment display signals
-        o_7seg_P1 <= not r_7seg_P1;
-        o_7seg_P2 <= not r_7seg_P2;
-        o_7seg_sign <= not r_7seg_sign;
-
-        
-
 
     end RTL;

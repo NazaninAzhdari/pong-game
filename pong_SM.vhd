@@ -82,7 +82,7 @@ architecture RTL of pong_SM is
 
     --state machine
     type pong_game is (IDLE, GAME_START, COUNT, GAME_RUNNING, P1_WIN, P2_WIN, END_GAME);
-    signal r_SM         :   pong_game       :=IDLE;
+    signal r_SM              :   pong_game            :=IDLE;
 
     --score signals
     signal r_score_p1        : integer range 0 to 9   :=0;
@@ -106,11 +106,11 @@ architecture RTL of pong_SM is
                     w_reset <= i_reset;
                     w_start <= i_start;
 
-                    if i_reset = '0' and w_reset = '1' then --falling edge of the reset button will reset the game
+                    if i_reset = '0' and w_reset = '1' then  --falling edge of the reset button will reset the game
                         r_start  <= '0';
                         r_score_P1 <= 0;
                         r_score_P2 <= 0;
-                        r_SM       <= IDLE;
+                        r_SM <= IDLE;
                     else
                         
                         case r_SM is
@@ -200,7 +200,7 @@ architecture RTL of pong_SM is
                                 r_draw_game_DV <= '0';
                                 r_draw_gameOver_DV <= '1';
 
-                                if i_start= '0' and w_start = '1' then  --falling edge of start button, go from game over page to game page
+                                if i_start= '0' and w_start = '1' then  --falling edge of start button, go from game over state to start-game state
                                     r_SM <= GAME_START;
                                 end if;
 
@@ -230,7 +230,7 @@ architecture RTL of pong_SM is
         r_x <= w_x(pc_VGA_BITS-1 downto 4);
         r_y <= w_y(pc_VGA_BITS-1 downto 4);
 
-        --paddle 1
+        --control paddle 1
         paddle1: entity work.pong_paddle
         generic map (
         g_X_LOCATION_PADDLE=> pc_X_PADDLE_PLAYER1
@@ -247,7 +247,7 @@ architecture RTL of pong_SM is
             o_draw_paddle=> r_draw_paddle1
         );
 
-        --paddle 2
+        --control paddle 2
         paddle2: entity work.pong_paddle
         generic map (
         g_X_LOCATION_PADDLE=> pc_X_PADDLE_PLAYER2
@@ -264,7 +264,7 @@ architecture RTL of pong_SM is
             o_draw_paddle=> r_draw_paddle2
         );
 
-        --ball
+        --control ball
         ball: entity work.pong_ball
         port map (
             i_clk => i_clk, --25MHz
@@ -304,8 +304,7 @@ architecture RTL of pong_SM is
         );
         
 
-
-        --converting unsigned signals to integer
+        --Converting unsigned signals to integer
         r_x_ball_int <= to_integer(r_x_ball);
 		r_y_ball_int <= to_integer(r_y_ball);
 		r_y_paddle1_top_int <= to_integer(r_y_paddle1_top);
@@ -359,9 +358,8 @@ architecture RTL of pong_SM is
         r_draw_total_gameOver <= '1' when r_draw_edge_border = '1' or r_draw_gameOver_txt = '1' else '0';
         r_draw_whole_border <= '1' when r_draw_edge_border = '1' or r_draw_middle_border = '1' else '0';
         r_draw_total_game <= '1' when r_draw_paddle1='1' or r_draw_paddle2='1' or r_draw_whole_border='1' or r_draw_ball ='1'  else '0';
-
-		
-        --connecting signals to output signals
+	
+        --Connecting signals to output signals
 		o_hs <= r_hs;
 		o_vs <= r_vs;
 		o_de <= r_de;

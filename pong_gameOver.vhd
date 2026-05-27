@@ -21,7 +21,7 @@ architecture RTL of pong_gameOver is
         r_x <= to_integer(i_x);
         r_y <= to_integer(i_y);
 
-                            --the "Game Over" text and the border around it
+                            --the "Game Over" text
         o_draw_gameOver_txt <=  pf_draw_letter_G(r_x-9, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 9 and r_x <= 13 else
                                 pf_draw_letter_A(r_x-15, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 15 and r_x <= 19 else
                                 pf_draw_letter_M(r_x-21, r_y-7) when r_y >= 7 and r_y <= 13 and r_x >= 21 and r_x <= 25 else

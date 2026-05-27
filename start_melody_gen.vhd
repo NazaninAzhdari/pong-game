@@ -28,7 +28,7 @@ architecture RTL of start_melody_gen is
         2 => 24,
         3 => 20,
         4 => 16,
-		  5 => 16
+		5 => 16
     );
     constant c_DURATION_LIMIT  :  integer   :=24000;
     signal r_duration_counter : integer range 0 to c_DURATION_LIMIT := 0;

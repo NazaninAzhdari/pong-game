@@ -26,7 +26,6 @@ architecture RTL of sevenSeg_display is
                     when 7 => o_7seg <= "1110000";
                     when 8 => o_7seg <= "1111111";
                     when 9 => o_7seg <= "1111011";
-                    when 10 => o_7seg <= "0000001"; --represents "-"
                     when others => o_7seg <= "0000000";
                     end case;
                 end if;

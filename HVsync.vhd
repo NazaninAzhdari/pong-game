@@ -18,17 +18,20 @@ entity HVsync is
 end HVsync;
 
 architecture RTL of HVsync is
-    signal  r_x     :   integer range 0 to pc_H_TOTAL-1    :=0;
-    signal  r_y     :   integer range 0 to pc_V_TOTAL-1   :=0;
+    signal  r_x     :   integer range 0 to pc_H_TOTAL-1     :=0;
+    signal  r_y     :   integer range 0 to pc_V_TOTAL-1     :=0;
+    signal  w_reset :   STD_LOGIC                           :='0';
 
     begin
-        process(i_clk, i_reset) is
+        process(i_clk) is
             begin
-                if i_reset = '1' then
-                    r_x <= 0;
-                    r_y <= 0;
-                else
-                    if rising_edge(i_clk) then
+                if rising_edge(i_clk) then
+                    w_reset <= i_reset;
+                    if i_reset = '0' and w_reset = '1' then --falling edge of the reset button
+                        r_x <= 0;
+                        r_y <= 0;
+                    else
+
                         if r_y < pc_V_TOTAL -1 then
                             if r_x < pc_H_TOTAL-1 then
                                 r_x <= r_x + 1;
@@ -39,6 +42,7 @@ architecture RTL of HVsync is
                         else
                             r_y <= 0;
                         end if;
+
                     end if;
                 end if;
             end process;
