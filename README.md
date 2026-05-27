@@ -14,10 +14,17 @@ The goal of this project is to recreate the iconic Pong game entirely in hardwar
 ---
 
 ## 2. System Architecture
-The architecture follows a hierarchical design. At the center is the **Top-Level Module (`pong_top`)**, which connects the game logic, video generation, and audio systems. 
-
-The system operates on a **50MHz main clock**, which is divided down to **25MHz** for the video synchronization. The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whether the game is in the "Start," "Play," or "Game Over" phase. It receives inputs from the paddles and ball modules and decides what should be drawn on the screen and what sounds should play.
+The architecture follows a hierarchical design. At the center is the **Top-Level Module (`pong_top`)**, which connects the game logic, video generation, and audio systems. The system operates on a **50MHz main clock**, which is divided down to **25MHz** for the video synchronization. 
+  
+**The Pong Game's Block Diagram:**  
+![The Pong Game's Diagram](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/Block_Diagram_Pong_Game.png)  
+  
+  
+**State Machine(FSM):**
+The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whether the game is in the "Start," "Play," or "Game Over" phase. It receives inputs from the paddles and ball modules and decides what should be drawn on the screen and what sounds should play.  
+  
 ![The Pong Game's FSM](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/FSM_pong_game.png)
+  
 
 
 ---
