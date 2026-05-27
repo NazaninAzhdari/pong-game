@@ -69,12 +69,16 @@ The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whet
 1.  **Open the Project:** Load the project files into Quartus II.
 2.  **Assign Pins:** Use the Pin Planner to map the inputs (buttons, 50MHz clock) and outputs (HDMI Data-Bus, HS, VS, DE, Audio I2S, 7-segment display) according to your specific board's manual. For the Cyclone V GX FPGA, I have used the follwing Pinout table.
   
+## Input Pins:  
 ![Inputs Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/inputs_pin_table.png)
   
+## Seven-Segment Pins:  
 ![7seg Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/7seg_pin_table.png)
   
-![audio interface Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/audio_interface__pin_table.png)
+## Audio Interface Pins:  
+![audio interface Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/audio_interface_pin_table.png)
   
+## HDMI Pins:  
 ![hdmi Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/hdmi_pin_table.png)
   
 3.  **Compile:** Run the compilation process. The design is efficient, using only about **2% of the available ALMs** (Logic units) and **478 registers**.
