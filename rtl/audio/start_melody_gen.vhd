@@ -72,11 +72,11 @@ architecture RTL of start_melody_gen is
                                 r_sample <= AMP_NEG;
                             end if;
                         else
-									r_sample <= (others=>'0');
-									r_freq_counter <= 0;
-									r_duration_counter <= 0;
-									tone_indx <= 0;
-									r_level <='0';
+                            r_sample <= (others=>'0');
+                            r_freq_counter <= 0;
+                            r_duration_counter <= 0;
+                            tone_indx <= 0;
+                            r_level <='0';
                         end if;
                     end if;
                 end if;
