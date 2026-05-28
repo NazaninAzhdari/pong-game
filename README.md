@@ -84,23 +84,9 @@ The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whet
 ### Setup Steps
 1.  **Open the Project:** Load the project files into Quartus II.
 2.  **Assign Pins:** Use the Pin Planner to map the inputs (buttons, 50MHz clock) and outputs (HDMI Data-Bus, HS, VS, DE, Audio I2S, 7-segment display) according to your specific board's manual. For the Cyclone V GX FPGA, I have used the follwing Pinout table:  
-
-[Click here to open the Pinout-Table.CSV](./data/myfile.csv)
-
-
   
-## Input Pins:  
-![Inputs Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/inputs_pin_table.png)
-  
-## Seven-Segment Pins:  
-![7seg Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/7seg_pin_table.png)
-  
-## Audio Interface Pins:  
-![audio interface Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/audio_interface_pin_table.png)
-  
-## HDMI Pins:  
-![hdmi Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/hdmi_pin_table.png)
-  
+[Click here to open the Pinout-Table.CSV](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pinout/pong.csv)
+   
 3.  **Compile:** Run the compilation process. The design is efficient, using only about **2% of the available ALMs** (Logic units) and **478 registers** of the FPGA.
 4.  **Program the FPGA:** Connect your board via USB-Blaster and upload the generated `.sof` file.
 5.  **Play:** Press the "Start" button to begin! Use the Up/Down buttons to control your paddle. The score will update automatically on the 7-segment display when the ball passes a player.
