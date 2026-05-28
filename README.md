@@ -1,4 +1,4 @@
-# VHDL Digital Pong Game for Cyclone V FPGA
+# VHDL Digital Pong Game for Cyclone V GX FPGA
 
 Welcome to the **VHDL Hardware Pong Game** project! This repository contains a complete hardware implementation of the classic Pong game, designed specifically for the **Altera Cyclone V GX FPGA**. This project demonstrates how to build a real-time interactive system using VHDL, covering everything from HDMI video generation to I2S audio processing.
 
@@ -12,8 +12,20 @@ The goal of this project is to recreate the iconic Pong game entirely in hardwar
 *   **Robust Input:** Button signals are cleaned using debounce filters to ensure smooth paddle movement.
 
 ---
+## 2. Hardware Overview:  
+The project is specifically designed for the **Altera Cyclone V GX Starter Kit**(FPGA device part number **5CGXFC5C6F27C7**). 
+  
+![Cyclone V GX Starter Kit](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/Cyclone_V_GX.png)  
+  
+  
+The hardware components used in Pong Game project include:  
+*   **Switches and Push Buttons**  
+*   **HDMI TX - Video Output Interface:**  
+*   **24-bit CODEC line-out - Audio Output Hardware:**  
+*   **7-Segment (Hex) Displays:**  
+  
 
-## 2. System Architecture
+## 3. System Architecture
 The architecture follows a hierarchical design. At the center is the **Top-Level Module (`top/pong_top`)**, which connects the game logic, video generation, and audio systems. The system operates on a **50MHz main clock**, which is divided down to **25MHz** for the video synchronization. 
   
 ## The Pong Game's Block Diagram:  
@@ -30,7 +42,7 @@ The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whet
   
 ---
 
-## 3. Detailed Module Descriptions
+## 4. Detailed Module Descriptions
 
 ### Core Logic & Control
 *   **`top/pong_top.vhd`**: This is the master wrapper. It connects the FPGA pins (buttons, switches, VGA, and Audio) to the internal logic.
@@ -55,7 +67,7 @@ The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whet
 
 ---
 
-## 4. Hardware Deployment & Setup Guide
+## 5. Hardware Deployment & Setup Guide
 
 ### Requirements
 *   **FPGA:** Cyclone V GX (Target Device: `5CGXFC5C6F27C7`).
@@ -81,7 +93,7 @@ The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whet
 ## HDMI Pins:  
 ![hdmi Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/hdmi_pin_table.png)
   
-3.  **Compile:** Run the compilation process. The design is efficient, using only about **2% of the available ALMs** (Logic units) and **478 registers**.
+3.  **Compile:** Run the compilation process. The design is efficient, using only about **2% of the available ALMs** (Logic units) and **478 registers** of the FPGA.
 4.  **Program the FPGA:** Connect your board via USB-Blaster and upload the generated `.sof` file.
 5.  **Play:** Press the "Start" button to begin! Use the Up/Down buttons to control your paddle. The score will update automatically on the 7-segment display when the ball passes a player.
 
