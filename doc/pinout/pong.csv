@@ -1,9 +1,3 @@
-"""# Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition"""
-"""# File: F:\IT\FPGA\Projects\Pong_Game\doc\pong.csv"""
-"""# Generated on: Thu May 28 17:41:01 2026"""
-
-"""# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus II software."""
-
 To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Transceiver Analog Settings Protocol,VCCR_GXB/VCCT_GXB Voltage,Transceiver I/O Pin Termination,Transceiver Dedicated Refclk Pin Termination,Transmitter Common Mode Driver Voltage,Transmitter Slew Rate Control,Transmitter Differential Output Voltage,Receiver Buffer Common Mode Voltage
 i_clk,Input,PIN_R20,5B,B5B_N0,PIN_R20,3.3-V LVTTL,,,,,,,,,,,,
 i_reset,Input,PIN_AE10,4A,B4A_N0,PIN_AE10,1.2 V,,,,,,,,,,,,
