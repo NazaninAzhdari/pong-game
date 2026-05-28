@@ -19,7 +19,7 @@ The goal of this project is to recreate the iconic Pong game entirely in hardwar
 ## 2. Hardware Overview:  
 The project is specifically designed for the **Altera Cyclone V GX Starter Kit** (FPGA device part number **5CGXFC5C6F27C7**). 
   
-![Cyclone V GX Starter Kit](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/Cyclone_V_GX_Board.png)  
+![Cyclone V GX Starter Kit](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/Cyclone_V_GX_Board.png)  
   
   
 The hardware components used in Pong Game project include:  
@@ -33,17 +33,17 @@ The hardware components used in Pong Game project include:
 The architecture follows a hierarchical design. At the center is the **Top-Level Module (`top/pong_top`)**, which connects the game logic, video generation, and audio systems. The system operates on a **50MHz main clock**, which is divided down to **25MHz** for the video synchronization. 
   
 ## The Pong Game's Block Diagram:  
-![The Pong Game's Diagram](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/Block_Diagram_Pong_Game.png)  
+![The Pong Game's Diagram](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/Block_Diagram_Pong_Game.png)  
   
   
   
 ## State Machine(FSM):    
 The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whether the game is in the "Start," "Play," or "Game Over" phase. It receives inputs from the paddles and ball modules and decides what should be drawn on the screen and what sounds should play.  
   
-![The Pong Game's FSM](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/FSM_pong_game.png)
+![The Pong Game's FSM](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/FSM_pong_game.png)
   
   
-  
+
 ---
 
 ## 4. Detailed Module Descriptions
@@ -83,21 +83,23 @@ The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whet
 
 ### Setup Steps
 1.  **Open the Project:** Load the project files into Quartus II.
-2.  **Assign Pins:** Use the Pin Planner to map the inputs (buttons, 50MHz clock) and outputs (HDMI Data-Bus, HS, VS, DE, Audio I2S, 7-segment display) according to your specific board's manual. For the Cyclone V GX FPGA, I have used the follwing Pinout table:
-[View the data](./yourfile.csv)
+2.  **Assign Pins:** Use the Pin Planner to map the inputs (buttons, 50MHz clock) and outputs (HDMI Data-Bus, HS, VS, DE, Audio I2S, 7-segment display) according to your specific board's manual. For the Cyclone V GX FPGA, I have used the follwing Pinout table:  
+
+[Click here to open the Pinout-Table.CSV](./data/myfile.csv)
+
 
   
 ## Input Pins:  
-![Inputs Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/inputs_pin_table.png)
+![Inputs Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/inputs_pin_table.png)
   
 ## Seven-Segment Pins:  
-![7seg Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/7seg_pin_table.png)
+![7seg Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/7seg_pin_table.png)
   
 ## Audio Interface Pins:  
-![audio interface Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/audio_interface_pin_table.png)
+![audio interface Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/audio_interface_pin_table.png)
   
 ## HDMI Pins:  
-![hdmi Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/hdmi_pin_table.png)
+![hdmi Pins](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/hdmi_pin_table.png)
   
 3.  **Compile:** Run the compilation process. The design is efficient, using only about **2% of the available ALMs** (Logic units) and **478 registers** of the FPGA.
 4.  **Program the FPGA:** Connect your board via USB-Blaster and upload the generated `.sof` file.
