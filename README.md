@@ -15,7 +15,7 @@ The goal of this project is to recreate the iconic Pong game entirely in hardwar
 ## 2. Hardware Overview:  
 The project is specifically designed for the **Altera Cyclone V GX Starter Kit**(FPGA device part number **5CGXFC5C6F27C7**). 
   
-![Cyclone V GX Starter Kit](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/Cyclone_V_GX.png)  
+![Cyclone V GX Starter Kit](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/Cyclone_V_GX_Board.png)  
   
   
 The hardware components used in Pong Game project include:  
