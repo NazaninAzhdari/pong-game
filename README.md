@@ -5,7 +5,7 @@ Welcome to the **VHDL Hardware Pong Game** project! This repository contains a c
 ## Watch my video on youtube (click on the picture below):  
 [![Watch the video](https://img.youtube.com/vi/uQnj32KqF_c/maxresdefault.jpg)](https://youtu.be/uQnj32KqF_c)    
   
-To be honest, this was the first serious project I created during my journey with FPGAs. In the summer of 2026, I decided that I wanted to truly master RTL design, and I asked myself: **what could be more joyful than building games in hardware?=)))**  
+To be honest, this was the first serious project I created during my journey with FPGAs. In the spring of 2026, I decided that I wanted to truly master RTL design, and I asked myself: **what could be more joyful than building games in hardware?=)))**  
 That idea became the start of my FPGA game‑development adventure. Pong was my first milestone, and through it I practiced real RTL design, timing, video output, and hardware‑driven game logic. This project represents the moment where my learning turned into something creative, fun, and fully my own.
   
 ---
