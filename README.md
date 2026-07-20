@@ -1,6 +1,6 @@
 # Hardware Implementation of the Pong Game
 
-Welcome to the **VHDL Hardware Pong Game** project! This repository contains a complete hardware implementation of the classic Pong game, designed specifically for the **Altera Cyclone V GX FPGA**. Let's have a quick Demo of the Game in video below.  
+Welcome to the **VHDL Hardware Pong Game** project! This repository contains a complete hardware implementation of the classic Pong game. Let's have a quick Demo of the Game in video below.  
 
 ## Watch my video on youtube (click on the picture below):  
 [![Watch the video](https://img.youtube.com/vi/uQnj32KqF_c/maxresdefault.jpg)](https://youtu.be/uQnj32KqF_c)    
