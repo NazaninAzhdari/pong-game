@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/NazaninAzhdari/i2s-audio-engine" class="btn btn-primary">
+  <a href="https://github.com/NazaninAzhdari/pong-game" class="btn btn-primary">
     View on GitHub
   </a>
 </p>
