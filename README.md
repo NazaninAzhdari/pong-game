@@ -1,5 +1,10 @@
-# Hardware Implementation of the Pong Game
+<p align="center">
+  <a href="https://github.com/NazaninAzhdari/i2s-audio-engine" class="btn btn-primary">
+    View on GitHub
+  </a>
+</p>
 
+# Hardware Implementation of the Pong Game
 Welcome to the **VHDL Hardware Pong Game** project! This repository contains a complete hardware implementation of the classic Pong game. Let's have a quick Demo of the Game in video below.  
 
 ## Watch my video on youtube (click on the picture below):  
@@ -19,13 +24,13 @@ The goal of this project is to recreate the iconic Pong game entirely in hardwar
 The architecture follows a hierarchical design. At the center is the **Top-Level Module (`top/pong_top`)**, which connects the game logic, video generation, and audio systems.
   
 ## The Pong Game's Block Diagram:  
-![The Pong Game's Diagram](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/Block_Diagram_Pong_Game.png)  
+![The Pong Game's Diagram](https://nazaninazhdari.github.io/pong-game/doc/pic/Block_Diagram_Pong_Game.png)  
   
   
 ## State Machine(FSM):    
 The **Game State Machine (`top/pong_SM`)** acts as the controller, managing whether the game is in the "Start," "Play," or "Game Over" phase. It receives inputs from the paddles and ball modules and decides what should be drawn on the screen and what sounds should play.  
   
-![The Pong Game's FSM](https://github.com/NazaninAzhdari/pong-game/blob/main/doc/pic/FSM_pong_game.png)
+![The Pong Game's FSM](https://nazaninazhdari.github.io/pong-game/doc/pic/FSM_pong_game.png)
   
   
 
