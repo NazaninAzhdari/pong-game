@@ -1,10 +1,21 @@
-<p align="center">
-  <a href="https://github.com/NazaninAzhdari/pong-game" class="btn btn-primary">
-    View on GitHub
+<div align="center">
+  <h1>Hardware Implementation of the Pong Game</h1>
+</div>
+
+<p align="center" style="margin-top: 0;">
+  <a href="https://github.com/NazaninAzhdari/pong-game" target="_blank" style="text-decoration: none;">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+         alt="GitHub Repo"
+         width="32"
+         height="32"
+         style="vertical-align: middle;">
+    <span style="font-size: 16px; margin-left: 8px; vertical-align: middle;">
+      View the code on GitHub
+    </span>
   </a>
 </p>
 
-# Hardware Implementation of the Pong Game
+---
 Welcome to the **VHDL Hardware Pong Game** project! This repository contains a complete hardware implementation of the classic Pong game. Let's have a quick Demo of the Game in video below.  
 
 ## Watch my video on youtube (click on the picture below):  
